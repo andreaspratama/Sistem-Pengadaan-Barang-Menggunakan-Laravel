@@ -26,7 +26,7 @@ class PerintahorderController extends Controller
 
     public function getData(Request $request)
     {
-        $query = Perintahorder::with(['vendor', 'pengadaan']); // asumsi relasi
+        $query = Perintahorder::with(['vendor', 'pengadaan'])->orderBy('id', 'desc')->get(); // asumsi relasi
 
         return DataTables::of($query)
             ->addIndexColumn()

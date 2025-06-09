@@ -23,12 +23,10 @@
         <div class="alert alert-danger d-flex align-items-center" role="alert">
             <i class="bi bi-cash-coin me-2 fs-5"></i>
             <div>
-                Terdapat <strong>{{ $pendingForFinance }}</strong> pengadaan yang menunggu approval Keuangan.
+                Terdapat <strong>{{ $pendingForFinance }}</strong> pengadaan yang menunggu validasi Keuangan.
                 @foreach($pengadaanMenungguFinance as $pengadaan)
                     <li>
-                        <a href="{{ route('approvalFinance', ['id' => $pengadaan->id]) }}">
-                            Approve: {{ $pengadaan->keterangan }}
-                        </a>
+                        Validated: {{ $pengadaan->keterangan }}
                     </li>
                 @endforeach
             </div>
@@ -42,31 +40,47 @@
                 Ada <strong>{{ $pendingForDirektur }}</strong> pengadaan yang perlu disetujui Direktur.
                 @foreach($pengadaanMenungguDirektur as $pengadaan)
                     <li>
-                        <a href="{{ route('approvalDirektur', ['id' => $pengadaan->id]) }}">
-                            Approve: {{ $pengadaan->keterangan }}
-                        </a>
+                        Approve: {{ $pengadaan->keterangan }}
                     </li>
                 @endforeach
             </div>
         </div>
     @endif
     
-    @if (auth()->user()->role == 'Procurement' && $pendingForProcurement > 0)
+    {{-- @if (auth()->user()->role == 'Procurement' && $pendingForProcurement > 0)
         <div class="alert alert-danger d-flex align-items-center" role="alert">
             <i class="bi bi-person-check me-2 fs-5"></i>
             <div>
                 Ada <strong>{{ $pendingForProcurement }}</strong> pengadaan yang perlu untuk pembuatan PERINTAH ORDER.
                 @foreach($pengadaanMenungguProcurement as $pengadaan)
                     <li>
-                        <a href="{{ route('approvalDirektur', ['id' => $pengadaan->id]) }}">
-                            Approve: {{ $pengadaan->keterangan }}
-                        </a>
+                        Approve: {{ $pengadaan->keterangan }}
                     </li>
                 @endforeach
             </div>
         </div>
-    @endif
+    @endif --}}
 
+    @if (auth()->user()->role === 'Procurement')
+        @if ($lastLogProcurement->status === 'complated')
+            @if (!empty($lastLogProcurement) && $lastLogProcurement->status === 'accepted' && !empty($lastLogProcurement->komentar))
+                <div class="alert alert-warning d-flex align-items-start gap-3 p-3 rounded shadow-sm" role="alert" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="#856404" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <div>
+                        <strong>Catatan dari Procurement:</strong>
+                        <p class="mb-2" style="font-size: 1rem; color: #ff0000;">{{ $lastLogProcurement->komentar }}</p>
+                        <a href="{{ route('pengadaan.show', $lastLogProcurement->pengadaan_id) }}" class="btn btn-sm btn-warning text-dark fw-semibold">
+                            Cek Detail Pengadaan
+                        </a>
+                    </div>
+                </div>
+            @endif
+        @endif
+    @endif
 
     <div class="row g-3 mb-4">
         <!-- Total Pengadaan -->
@@ -135,12 +149,30 @@
             </div>
             <div class="card-body">
                 @if ($lastLog)
-                    <p class="mb-2 mt-2">
-                        Anda terakhir melakukan approval pada pengadaan: 
-                        <strong>{{ $lastLog->pengadaan->keterangan ?? '-' }}</strong><br>
-                        Disetujui oleh: <strong>{{ ucfirst($lastLog->role) }}</strong> 
-                        pada <strong>{{ \Carbon\Carbon::parse($lastLog->tanggal_approval)->translatedFormat('d F Y') }}</strong>
-                    </p>
+                    @if (Auth::user()->role === 'Finance')
+                        <p class="mb-2 mt-2">
+                            Anda terakhir melakukan validasi pada pengadaan: 
+                            <strong>{{ $lastLog->pengadaan->keterangan ?? '-' }}</strong><br>
+                            Disetujui oleh: <strong>{{ ucfirst($lastLog->role) }}</strong> 
+                            pada <strong>{{ \Carbon\Carbon::parse($lastLog->tanggal_approval)->translatedFormat('d F Y') }}</strong>
+                        </p>
+                    @endif
+                    @if (Auth::user()->role === 'Director')
+                        <p class="mb-2 mt-2">
+                            Anda terakhir melakukan approval pada pengadaan: 
+                            <strong>{{ $lastLog->pengadaan->keterangan ?? '-' }}</strong><br>
+                            Disetujui oleh: <strong>{{ ucfirst($lastLog->role) }}</strong> 
+                            pada <strong>{{ \Carbon\Carbon::parse($lastLog->tanggal_approval)->translatedFormat('d F Y') }}</strong>
+                        </p>
+                    @endif
+                    @if (Auth::user()->role === 'Procurement')
+                        <p class="mb-2 mt-2">
+                            Anda terakhir melakukan review pada pengadaan: 
+                            <strong>{{ $lastLog->pengadaan->keterangan ?? '-' }}</strong><br>
+                            Disetujui oleh: <strong>{{ ucfirst($lastLog->role) }}</strong> 
+                            pada <strong>{{ \Carbon\Carbon::parse($lastLog->tanggal_approval)->translatedFormat('d F Y') }}</strong>
+                        </p>
+                    @endif
                 @else
                     <div class="alert alert-warning mb-0">
                         <i class="bi bi-info-circle me-2"></i>

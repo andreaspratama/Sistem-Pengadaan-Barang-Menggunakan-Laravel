@@ -139,9 +139,15 @@
                         'accepted' => [
                             'class' => 'success',
                             'text' => 'Barang telah diterima namun dengan catatan',
-                            'role' => 'Admin Keu',
+                            'role' => ['Admin Keu', 'Kabid', 'Kepala Sekolah'],
                             'status' => 'accepted',
                         ],
+                        // 'accepted' => [
+                        //     'class' => 'success',
+                        //     'text' => 'Barang telah diterima namun dengan catatan',
+                        //     'role' => 'Procurement',
+                        //     'status' => 'accepted',
+                        // ],
                         'completed' => [
                             'class' => 'success',
                             'text' => 'Barang telah diterima semua',
@@ -154,8 +160,12 @@
                 @if (array_key_exists($pengadaan->status, $statusBadges))
                     @php
                         $badge = $statusBadges[$pengadaan->status];
+
+                        // Cek apakah role berupa array atau string
+                        $roles = is_array($badge['role']) ? $badge['role'] : [$badge['role']];
+
                         $log = $pengadaan->approvalLogs
-                            ->where('role', $badge['role'])
+                            ->whereIn('role', $roles)
                             ->where('status', $badge['status'])
                             ->sortByDesc('tanggal_approval')
                             ->first();
@@ -322,7 +332,7 @@
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
-                                                    Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan approval Finance.
+                                                    Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan validated unit selain um Finance.
                                                     <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
                                                 </div>
                                             </div>
@@ -334,29 +344,31 @@
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                             <i class="bi bi-search"></i>Proses Validasi Finance
                                         </button>
+                                    </div>
+                                @elseif($status === 'pending')
+                                    <div class="alert alert-warning p-2 py-1 m-0">
+                                        Menunggu review dari kepala sekolah terlebih dahulu.
                                     </div>
                                 @endif
                             @else
-                                @if (in_array($status, ['pending', 'validated_kepsek']))
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
-                                            <div class="d-flex align-items-start">
-                                                <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
-                                                <div>
-                                                    Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan approval Finance.
-                                                    <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
-                                                </div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        <div class="d-flex align-items-start">
+                                            <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+                                            <div>
+                                                Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan validasi Finance.
+                                                <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
                                             </div>
                                         </div>
-
-                                        {{-- <a href="{{ route('approvalFinance', $pengadaan->id) }}" class="btn btn-primary btn-sm">
-                                            <i class="bi bi-search"></i> Proses Validasi Finance
-                                        </a> --}}
-                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                            <i class="bi bi-search"></i>Proses Validasi Finance
-                                        </button>
                                     </div>
-                                @endif
+
+                                    {{-- <a href="{{ route('approvalFinance', $pengadaan->id) }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-search"></i> Proses Validasi Finance
+                                    </a> --}}
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <i class="bi bi-search"></i>Proses Validasi Finance
+                                    </button>
+                                </div>
                             @endif
                         @elseif ($role === 'Director')
                             @if ($status === 'validated_finance')
@@ -385,7 +397,7 @@
                                             <i class="bi bi-search"></i> Proses Approval Direktur
                                         </a> --}}
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalDirektur">
-                                            <i class="bi bi-search"></i>Proses Validasi Direktur
+                                            <i class="bi bi-search"></i>Proses Approval Direktur
                                         </button>
                                     </div>
                                 @endif

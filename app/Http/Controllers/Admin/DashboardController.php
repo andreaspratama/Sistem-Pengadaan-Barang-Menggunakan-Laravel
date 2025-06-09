@@ -32,9 +32,17 @@ class DashboardController extends Controller
             'latestPengadaan' => (clone $pengadaanQuery)->latest()->take(5)->get(),
 
             // Log approval terakhir oleh user login
-            'lastLog' => ApprovalLog::whereIn('status', ['approved', 'rejected'])
+            'lastLog' => ApprovalLog::whereIn('status', ['approved', 'rejected', 'accepted', 'Finish Review'])
                 ->where('user_id', $user->id)
                 ->where('role', $user->role)
+                ->latest()
+                ->first(),
+
+            'lastLogProcurement' => ApprovalLog::where('status', 'accepted')
+                ->latest()
+                ->first(),
+
+            'lastLogProcurementFinish' => Pengadaan::where('status', 'finish')
                 ->latest()
                 ->first(),
 
@@ -45,7 +53,7 @@ class DashboardController extends Controller
 
             // Notifikasi approval
             'pendingForSupervisor' => (clone $pengadaanQuery)->where('status', 'menunggu-supervisor')->count(),
-            'pendingForFinance' => (clone $pengadaanQuery)->where('status', 'validated_kepsek')->count(),
+            'pendingForFinance' => (clone $pengadaanQuery)->whereIn('status', ['validated_kepsek', 'pending'])->count(),
             'pendingForDirektur' => (clone $pengadaanQuery)->where('status', 'validated_finance')->count(),
             'pendingForProcurement' => (clone $pengadaanQuery)->where('status', 'approved_director')->count(),
         ]);
