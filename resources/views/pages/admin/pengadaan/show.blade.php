@@ -94,6 +94,12 @@
 
                 @php
                     $statusBadges = [
+                        'validated_kepsek' => [
+                            'class' => 'success',
+                            'text' => 'Telah Divalidasi Oleh Kepala Sekolah',
+                            'role' => 'Kepala Sekolah',
+                            'status' => 'validated',
+                        ],
                         'validated_finance' => [
                             'class' => 'success',
                             'text' => 'Telah Divalidasi Oleh Finance',
@@ -150,7 +156,7 @@
                         // ],
                         'completed' => [
                             'class' => 'success',
-                            'text' => 'Barang telah diterima semua',
+                            'text' => 'Proses pengajuan barang telah selesai',
                             'role' => ['Admin Keu', 'Kabid'],
                             'status' => 'completed',
                         ],
@@ -206,7 +212,7 @@
                                 <th>Type</th>
                                 <th>Jumlah</th>
                                 <th>Merk</th>
-                                <th>Anggaran</th>
+                                <th>RAB / Item</th>
                                 <th>Total</th>
                                 <th>Validasi Finance</th>
                                 <th>Validasi Director</th>
@@ -236,17 +242,35 @@
                                     <td>
                                         @if($item->status_finance === 'pending')
                                             @if (in_array(Auth::user()->role, ['Finance', 'Checker']))
-                                                <form action="{{ route('pengadaan.approve', $item->id) }}" method="POST" style="display:inline;">
-                                                    @csrf
-                                                    <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
-                                                    <button class="btn btn-success btn-sm mb-3">ACC</button>
-                                                </form>
+                                                @if (in_array($pengadaan->unit, ['Pre School Gajahmada', 'Pre School Tanah Mas', 'Elementary', 'Junior High School', 'Senior High School']))
+                                                    @if ($pengadaan->status === 'validated_kepsek')
+                                                        <form action="{{ route('pengadaan.approve', $item->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
+                                                            <button class="btn btn-success btn-sm mb-3">ACC</button>
+                                                        </form>
 
-                                                <form action="{{ route('pengadaan.reject', $item->id) }}" method="POST" style="display:inline;">
-                                                    @csrf
-                                                    <input type="text" name="catatan" placeholder="Alasan ditolak" class="form-control form-control-sm mb-1" required>
-                                                    <button class="btn btn-danger btn-sm">Tolak</button>
-                                                </form>
+                                                        <form action="{{ route('pengadaan.reject', $item->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <input type="text" name="catatan" placeholder="Alasan ditolak" class="form-control form-control-sm mb-1" required>
+                                                            <button class="btn btn-danger btn-sm">Tolak</button>
+                                                        </form>
+                                                    @else
+                                                        <h6><span class="badge text-bg-danger">Validasi Kepsek Dulu</span></h6>
+                                                    @endif
+                                                @else
+                                                    <form action="{{ route('pengadaan.approve', $item->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
+                                                        <button class="btn btn-success btn-sm mb-3">ACC</button>
+                                                    </form>
+
+                                                    <form action="{{ route('pengadaan.reject', $item->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <input type="text" name="catatan" placeholder="Alasan ditolak" class="form-control form-control-sm mb-1" required>
+                                                        <button class="btn btn-danger btn-sm">Tolak</button>
+                                                    </form>
+                                                @endif
                                             @endif
                                         @else
                                             <span class="badge {{ $item->status_finance === 'checked' ? 'bg-success' : 'bg-danger' }}">
@@ -257,7 +281,50 @@
                                     </td>
                                     <td>
                                         @if($item->status_direktur === 'pending')
-                                            @if (Auth::user()->role === 'Director')
+                                            @if (in_array(Auth::user()->role, ['Director']))
+                                                @if (in_array($pengadaan->unit, ['Pre School Gajahmada', 'Pre School Tanah Mas', 'Elementary', 'Junior High School', 'Senior High School']))
+                                                    {{-- @if ($pengadaan->status === 'pending')
+                                                        <form action="{{ route('pengadaan.approveDirector', $item->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
+                                                            <button class="btn btn-success btn-sm mb-3">ACC</button>
+                                                        </form>
+
+                                                        <form action="{{ route('pengadaan.rejectDirector', $item->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <input type="text" name="catatan" placeholder="Alasan ditolak" class="form-control form-control-sm mb-1" required>
+                                                            <button class="btn btn-danger btn-sm">Tolak</button>
+                                                        </form> --}}
+                                                    @if ($pengadaan->status === 'validated_finance')
+                                                        <form action="{{ route('pengadaan.approveDirector', $item->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
+                                                            <button class="btn btn-success btn-sm mb-3">ACC</button>
+                                                        </form>
+
+                                                        <form action="{{ route('pengadaan.rejectDirector', $item->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <input type="text" name="catatan" placeholder="Alasan ditolak" class="form-control form-control-sm mb-1" required>
+                                                            <button class="btn btn-danger btn-sm">Tolak</button>
+                                                        </form>
+                                                    @endif
+                                                @elseif($pengadaan->unit === 'Manajemen')
+                                                    @if ($pengadaan->status === 'validated_finance')
+                                                        <form action="{{ route('pengadaan.approveDirector', $item->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
+                                                            <button class="btn btn-success btn-sm mb-3">ACC</button>
+                                                        </form>
+
+                                                        <form action="{{ route('pengadaan.rejectDirector', $item->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <input type="text" name="catatan" placeholder="Alasan ditolak" class="form-control form-control-sm mb-1" required>
+                                                            <button class="btn btn-danger btn-sm">Tolak</button>
+                                                        </form>
+                                                    @endif
+                                                @endif
+                                            @endif
+                                            {{-- @if (Auth::user()->role === 'Director')
                                                 <form action="{{ route('pengadaan.approveDirector', $item->id) }}" method="POST" style="display:inline;">
                                                     @csrf
                                                     <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
@@ -269,7 +336,7 @@
                                                     <input type="text" name="catatan" placeholder="Alasan ditolak" class="form-control form-control-sm mb-1" required>
                                                     <button class="btn btn-danger btn-sm">Tolak</button>
                                                 </form>
-                                            @endif
+                                            @endif --}}
                                         @else
                                             <span class="badge {{ $item->status_direktur === 'approved' ? 'bg-success' : 'bg-danger' }}">
                                                 {{ ucfirst($item->status_direktur) }}
@@ -346,29 +413,31 @@
                                         </button>
                                     </div>
                                 @elseif($status === 'pending')
-                                    <div class="alert alert-warning p-2 py-1 m-0">
+                                    <div class="alert alert-danger p-2 py-1 m-0">
                                         Menunggu review dari kepala sekolah terlebih dahulu.
                                     </div>
                                 @endif
-                            @else
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
-                                        <div class="d-flex align-items-start">
-                                            <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
-                                            <div>
-                                                Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan validasi Finance.
-                                                <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
+                            @elseif ($unit === 'Manajemen')
+                                @if ($status === 'pending')
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+                                                <div>
+                                                    Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan validasi Finance.
+                                                    <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {{-- <a href="{{ route('approvalFinance', $pengadaan->id) }}" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-search"></i> Proses Validasi Finance
-                                    </a> --}}
-                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                        <i class="bi bi-search"></i>Proses Validasi Finance
-                                    </button>
-                                </div>
+                                        {{-- <a href="{{ route('approvalFinance', $pengadaan->id) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-search"></i> Proses Validasi Finance
+                                        </a> --}}
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            <i class="bi bi-search"></i>Proses Validasi Finance
+                                        </button>
+                                    </div>
+                                @endif
                             @endif
                         @elseif ($role === 'Director')
                             @if ($status === 'validated_finance')
@@ -400,11 +469,15 @@
                                             <i class="bi bi-search"></i>Proses Approval Direktur
                                         </button>
                                     </div>
+                                @elseif ($unit === 'Manajemen')
+                                    <div class="alert alert-danger p-2 py-1 m-0">
+                                        Menunggu validasi dari Finance terlebih dahulu.
+                                    </div>
+                                @else
+                                    <div class="alert alert-danger p-2 py-1 m-0">
+                                        Menunggu validasi dari Finance terlebih dahulu.
+                                    </div>
                                 @endif
-                            @elseif($status === 'pending')
-                                <div class="alert alert-info p-2 py-1 m-0">
-                                    Menunggu persetujuan dari Finance terlebih dahulu.
-                                </div>
                             @endif
                         @elseif ($role === 'Procurement')
                             @if ($status === 'approved_director')
@@ -485,9 +558,9 @@
             @csrf
 
             <div class="mb-3">
-                <label for="status" class="form-label fw-semibold">Status Persetujuan</label>
+                <label for="status" class="form-label fw-semibold">Validation Status</label>
                 <select name="status" id="status" class="form-select" required>
-                    <option value="">-- Pilih Status --</option>
+                    <option value="">-- Select Status --</option>
                     <option value="validated">Validasi Oke</option>
                     <option value="rejected">Tolak</option>
                 </select>

@@ -23,14 +23,13 @@
                         <select id="filter-status" class="form-select">
                             <option value="">-- Filter Status --</option>
                             <option value="pending">Pending</option>
-                            <option value="approved_finance">Approved Finance</option>
-                            <option value="approved_procurement">Approved Procurement</option>
+                            <option value="validated_kepsek">Validated Kepala Sekolah</option>
+                            <option value="validated_finance">Validated Finance</option>
                             <option value="approved_director">Approved Director</option>
-                            <option value="rejected_finance">Rejected Finance</option>
-                            <option value="rejected_procurement">Rejected Procurement</option>
-                            <option value="rejected_director">Rejected Director</option>
+                            <option value="finish_procurement">Finish Review Procurement</option>
                             <option value="purchased">Purchased</option>
                             <option value="distributed">Distributed</option>
+                            <option value="accepted">Accepted</option>
                             <option value="completed">Completed</option>
                         </select>
                     </div>

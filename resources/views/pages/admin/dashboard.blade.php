@@ -153,7 +153,7 @@
                         <p class="mb-2 mt-2">
                             Anda terakhir melakukan validasi pada pengadaan: 
                             <strong>{{ $lastLog->pengadaan->keterangan ?? '-' }}</strong><br>
-                            Disetujui oleh: <strong>{{ ucfirst($lastLog->role) }}</strong> 
+                            Divalidasi oleh: <strong>{{ ucfirst($lastLog->role) }}</strong> 
                             pada <strong>{{ \Carbon\Carbon::parse($lastLog->tanggal_approval)->translatedFormat('d F Y') }}</strong>
                         </p>
                     @endif

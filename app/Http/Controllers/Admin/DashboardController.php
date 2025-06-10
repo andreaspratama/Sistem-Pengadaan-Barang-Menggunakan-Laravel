@@ -32,7 +32,7 @@ class DashboardController extends Controller
             'latestPengadaan' => (clone $pengadaanQuery)->latest()->take(5)->get(),
 
             // Log approval terakhir oleh user login
-            'lastLog' => ApprovalLog::whereIn('status', ['approved', 'rejected', 'accepted', 'Finish Review'])
+            'lastLog' => ApprovalLog::whereIn('status', ['approved', 'rejected', 'accepted', 'Finish Review', 'validated'])
                 ->where('user_id', $user->id)
                 ->where('role', $user->role)
                 ->latest()
