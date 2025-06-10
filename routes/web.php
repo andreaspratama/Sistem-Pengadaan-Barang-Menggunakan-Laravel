@@ -34,7 +34,7 @@ Route::prefix('admin')
             Route::resource('kategori', KategoriController::class);
 
             // VENDOR
-            Route::resource('vendor', VendorController::class)->middleware('UserAkses:Admin');
+            Route::resource('vendor', VendorController::class)->middleware('UserAkses:Admin,Procurement');
 
             // FORM VENDOR
             Route::resource('formvendor', FormvendorController::class);

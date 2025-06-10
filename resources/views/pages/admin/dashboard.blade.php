@@ -61,7 +61,7 @@
         </div>
     @endif --}}
 
-    @if (auth()->user()->role === 'Procurement')
+    {{-- @if (auth()->user()->role === 'Procurement')
         @if ($lastLogProcurement->status === 'complated')
             @if (!empty($lastLogProcurement) && $lastLogProcurement->status === 'accepted' && !empty($lastLogProcurement->komentar))
                 <div class="alert alert-warning d-flex align-items-start gap-3 p-3 rounded shadow-sm" role="alert" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
@@ -80,7 +80,7 @@
                 </div>
             @endif
         @endif
-    @endif
+    @endif --}}
 
     <div class="row g-3 mb-4">
         <!-- Total Pengadaan -->
