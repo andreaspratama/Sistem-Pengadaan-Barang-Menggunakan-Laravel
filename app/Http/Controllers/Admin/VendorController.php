@@ -73,9 +73,10 @@ class VendorController extends Controller
      */
     public function edit(string $id)
     {
+        $kategoris = Kategori::all();
         $item = Vendor::findOrFail($id);
 
-        return view('pages.admin.vendor.edit', compact('item'));
+        return view('pages.admin.vendor.edit', compact('item', 'kategoris'));
     }
 
     /**

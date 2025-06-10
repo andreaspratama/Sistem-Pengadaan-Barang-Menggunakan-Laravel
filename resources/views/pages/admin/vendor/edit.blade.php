@@ -30,12 +30,19 @@
                                 <input type="text" class="form-control" name="nama_perusahaan" value="{{$item->nama_perusahaan}}">
                             </div>
                             <div class="mb-3">
-                                <label for="tahun_berdiri" class="block form-label">Tahun Berdiri</label>
-                                <input type="number" name="tahun_berdiri" id="tahun_berdiri" class="mt-1 block w-full border rounded p-2 form-control" value="{{$item->tahun_berdiri}}">
+                                <label for="kategori_id" class="block form-label">Kategori Bisnis</label>
+                                <select class="form-select" aria-label="Default select example" name="kategori_id">
+                                    <option disabled>Pilih Kategori Perusahaan</option>
+                                    @foreach ($kategoris as $ktg)
+                                        <option value="{{ $ktg->id }}" {{ old('kategori_id', $item->kategori_id) == $ktg->id ? 'selected' : '' }}>
+                                            {{ $ktg->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="mb-3">
-                                <label for="kategori_bisnis" class="block form-label">Kategori Bisnis</label>
-                                <input type="text" name="kategori_bisnis" id="kategori_bisnis" class="mt-1 block w-full border rounded p-2 form-control" value="{{$item->kategori_bisnis}}">
+                                <label for="tahun_berdiri" class="block form-label">Tahun Berdiri</label>
+                                <input type="text" name="tahun_berdiri" id="tahun_berdiri" class="mt-1 block w-full border rounded p-2 form-control" value="{{$item->tahun_berdiri}}">
                             </div>
                             <div class="mb-3">
                                 <label for="no_telp" class="block form-label">Nomor Telepon</label>
