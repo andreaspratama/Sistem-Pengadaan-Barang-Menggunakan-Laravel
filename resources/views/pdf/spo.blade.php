@@ -79,7 +79,7 @@
                 </tr>
             @endforeach
             <tr>
-                <td colspan="6"><strong>Catatan Tambahan:</strong><br>{{ $catatan ?? '' }}</td>
+                <td colspan="6"><strong>Catatan Tambahan:</strong><br>{{ $pemesan['catatan'] ?? '' }}</td>
             </tr>
         </tbody>
     </table>

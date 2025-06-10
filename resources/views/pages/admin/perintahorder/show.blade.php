@@ -36,9 +36,12 @@
                     <div class="col-md-6"><strong>Alamat:</strong> {{ $po->alamat_pemesan }}</div>
                     <div class="col-md-6"><strong>No Telp:</strong> {{ $po->no_telp }}</div>
                 </div>
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-md-6"><strong>Contact Person:</strong> {{ $po->contact_person }}</div>
                     <div class="col-md-6"><strong>Diskon:</strong> {{ $po->diskon }}%</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><strong>PPN:</strong> {{ $po->ppn }}%</div>
                 </div>
             </div>
         </div>

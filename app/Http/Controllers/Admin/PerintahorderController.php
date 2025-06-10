@@ -121,9 +121,11 @@ class PerintahorderController extends Controller
                 'nama_pemesan'    => $request->nama_pemesan,
                 'alamat_pemesan'  => $request->alamat_pemesan,
                 'diskon'  => $request->diskon,
+                'ppn'  => $request->ppn,
                 'no_telp'  => $request->no_telp,
                 'contact_person'  => $request->contact_person,
                 'email'  => $request->email,
+                'catatan'  => $request->catatan,
             ]);
 
             // Simpan ke tabel perintahorder_items

@@ -188,7 +188,7 @@
                 $nilaiDiskon = $hargaSebelumDiskonPPN * ($diskonPersen / 100);
                 $hargaSetelahDiskon = $hargaSebelumDiskonPPN - $nilaiDiskon;
 
-                $ppnPersen = 11;
+                $ppnPersen = $po->ppn;
                 $nilaiPPN = $hargaSetelahDiskon * ($ppnPersen / 100);
                 $hargaSetelahDiskonDanPPN = $hargaSetelahDiskon + $nilaiPPN;
             @endphp
@@ -206,7 +206,7 @@
             <td>
                 <table style="width: 100%;">
                     <tr><td>Subtotal</td><td>Rp {{number_format($hargaSebelumDiskonPPN, 0, ',', '.')}}</td></tr>
-                    <tr><td>PPN (%)</td><td>11%</td></tr>
+                    <tr><td>PPN (%)</td><td>{{$po->ppn}}%</td></tr>
                     <tr><td>Diskon (%)</td><td>{{$po->diskon}}%</td></tr>
                     <tr><td><strong>TOTAL</strong></td><td><strong>Rp {{number_format($hargaSetelahDiskonDanPPN, 0, ',', '.')}}</strong></td></tr>
                 </table>

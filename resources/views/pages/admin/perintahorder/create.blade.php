@@ -107,6 +107,16 @@
                     </div>
                 </div>
 
+                <div class="mb-3">
+                    <label for="ppn" class="form-label">PPN</label>
+                    <input type="text" name="ppn" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="catatan" class="form-label">Catatan</label>
+                    <textarea name="catatan" class="form-control" rows="3"></textarea>
+                </div>
+
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">
                         💾 Simpan
