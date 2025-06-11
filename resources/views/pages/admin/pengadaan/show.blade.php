@@ -17,6 +17,7 @@
                 </a>
             </div>
             <div class="card-body">
+                {{--  --}}
                 @if (Auth::user()->role === 'Procurement')
                     <div class="d-flex gap-2 mt-3">
                         @if ($pengadaan->status === 'finish_procurement')
@@ -35,7 +36,10 @@
 
                     </div>
                 @endif
-                    @if ($pengadaan->status === 'distributed')
+                    @php
+                        $roleTerlarang = ['Procurement', 'Director', 'Finance'];
+                    @endphp
+                    @if ($pengadaan->status === 'distributed' && !in_array(Auth::user()->role, $roleTerlarang))
                         <form action="{{ route('pengadaan.updateStatusWithNote', [$pengadaan->id, 'accepted']) }}" method="POST" class="mt-3">
                             @csrf
                             <div class="form-group">
@@ -45,9 +49,6 @@
                             <button class="btn btn-warning mt-2">Accepted</button>
                         </form>
                     @endif
-                    @php
-                        $roleTerlarang = ['Procurement', 'Director', 'Finance'];
-                    @endphp
 
                     @if ($pengadaan->status === 'accepted' && !in_array(Auth::user()->role, $roleTerlarang))
                         <form action="{{ route('pengadaan.updateStatus', [$pengadaan->id, 'completed']) }}" method="POST" class="mt-3">
@@ -73,7 +74,7 @@
                         @foreach ($pengadaan->approvalLogs as $log)
                             <li class="list-group-item">
                                 <span class="badge bg-success">{{ ucfirst($log->status) }}</span>
-                                by <strong>{{ $log->role }}</strong>  {{ $log->komentar }} <br>
+                                by <strong>{{ $log->role }}</strong>  "{{ $log->komentar }}" <br>
                                 <small>{{ \Carbon\Carbon::parse($log->tanggal_approval)->format('d M Y') }}</small>
                             </li>
                         @endforeach
@@ -91,72 +92,72 @@
                 @endforeach
                 </ul> --}}
 
+                {{-- @php
+                    $hasNote = $pengadaan->approvalLogs->catatan !== null;
+                @endphp --}}
+                @php
+                    $acceptedLogWithNote = $pengadaan->approvalLogs
+                        ->where('status', 'accepted')
+                        ->filter(fn($log) => !is_null($log->komentar) && trim($log->komentar) !== '')
+                        ->first();
+                @endphp
+
+                @if ($pengadaan->status === 'accepted')
+                    @if ($acceptedLogWithNote)
+                        <div class="alert alert-warning">
+                            Barang telah diterima namun dengan catatan:<br>
+                            <strong>{{ $acceptedLogWithNote->komentar }}</strong>
+                        </div>
+                    @endif
+                @endif
 
                 @php
                     $statusBadges = [
                         'validated_kepsek' => [
                             'class' => 'success',
-                            'text' => 'Telah Divalidasi Oleh Kepala Sekolah',
+                            'text' => 'Validated by the Principal',
                             'role' => 'Kepala Sekolah',
                             'status' => 'validated',
                         ],
                         'validated_finance' => [
                             'class' => 'success',
-                            'text' => 'Telah Divalidasi Oleh Finance',
+                            'text' => 'Validated By Finance',
                             'role' => 'Finance',
                             'status' => 'validated',
                         ],
                         'approved_director' => [
                             'class' => 'success',
-                            'text' => 'Telah Disetujui Oleh Direktur',
+                            'text' => 'Approved By Director',
                             'role' => 'Director',
                             'status' => 'approved',
                         ],
                         'finish_procurement' => [
                             'class' => 'success',
-                            'text' => 'Telah dilihat oleh Procurement',
+                            'text' => 'Has been seen by Procurement',
                             'role' => 'Procurement',
                             'status' => 'Finish Review',
                         ],
-                        'rejected_finance' => [
-                            'class' => 'danger',
-                            'text' => 'Ditolak oleh Finance',
-                            'role' => 'Finance',
-                            'status' => 'rejected',
-                        ],
-                        'rejected_director' => [
-                            'class' => 'danger',
-                            'text' => 'Ditolak oleh Direktur',
-                            'role' => 'Director',
-                            'status' => 'rejected',
-                        ],
                         'purchased' => [
                             'class' => 'success',
-                            'text' => 'Barang sedang dibelikan oleh Procurement',
+                            'text' => 'Being purchased by procurement',
                             'role' => 'Procurement',
                             'status' => 'purchased',
                         ],
                         'distributed' => [
                             'class' => 'success',
-                            'text' => 'Barang telah didistribusikan',
+                            'text' => 'Has been distributed by procurement',
                             'role' => 'Procurement',
                             'status' => 'distributed',
                         ],
                         'accepted' => [
                             'class' => 'success',
-                            'text' => 'Barang telah diterima namun dengan catatan',
+                            'text' => 'Has been received by the unit',
                             'role' => ['Admin Keu', 'Kabid', 'Kepala Sekolah'],
                             'status' => 'accepted',
                         ],
-                        // 'accepted' => [
-                        //     'class' => 'success',
-                        //     'text' => 'Barang telah diterima namun dengan catatan',
-                        //     'role' => 'Procurement',
-                        //     'status' => 'accepted',
-                        // ],
                         'completed' => [
                             'class' => 'success',
-                            'text' => 'Proses pengajuan barang telah selesai',
+                            'text' => 'Complete, all is done',
                             'role' => ['Admin Keu', 'Kabid'],
                             'status' => 'completed',
                         ],
@@ -200,7 +201,6 @@
                         {{ $statusBadges[$pengadaan->status]['text'] }}
                     </div>
                 @endif --}}
-
                 <div class="table-responsive mt-3">
                     <table id="table-barang" class="table table-striped table-bordered align-middle" style="width:100%">
                         <thead class="table-primary">
@@ -370,7 +370,9 @@
                     @if (!$isRejected)
                         @php
                             $tanggalPengajuan = \Carbon\Carbon::parse($pengadaan->tanggal_pengajuan);
-                            $batasWaktuFinance = $tanggalPengajuan->copy()->addDays(7);
+                            $batasWaktuChecker = $tanggalPengajuan->copy()->addDays(1); 
+                            $batasWaktuKepsek = $tanggalPengajuan->copy()->addDays(2); 
+                            $batasWaktuFinance = $tanggalPengajuan->copy()->addDays(2); 
                         @endphp
                         @if($role === 'Kepala Sekolah' && $status === 'pending')
                             <div class="d-flex justify-content-between align-items-start mb-3">
@@ -378,8 +380,8 @@
                                     <div class="d-flex align-items-start">
                                         <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                         <div>
-                                            Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan validasi pengajuan.
-                                            <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
+                                            Anda memiliki waktu <strong>2 hari</strong> sejak pengajuan untuk melakukan validasi pengajuan.
+                                            {{-- <div>Batas waktu: <strong>{{ $batasWaktuKepsek->translatedFormat('d F Y') }}</strong></div> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -399,8 +401,8 @@
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
-                                                    Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan validated unit selain um Finance.
-                                                    <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
+                                                    Anda memiliki waktu <strong>2 hari</strong> sejak sudah dilakukan checker untuk melakukan validasi Finance.
+                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -424,8 +426,8 @@
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
-                                                    Anda memiliki waktu <strong>7 hari</strong> sejak pengajuan untuk melakukan validasi Finance.
-                                                    <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
+                                                    Anda memiliki waktu <strong>2 hari</strong> sejak sudah dilakukan checker untuk melakukan validasi Finance.
+                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -436,6 +438,40 @@
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                             <i class="bi bi-search"></i>Proses Validasi Finance
                                         </button>
+                                    </div>
+                                @endif
+                            @endif
+                        @elseif ($role === 'Checker')
+                            @if (in_array($unit, ['Pre School Gajahmada', 'Pre School Tanah Mas', 'Elementary', 'Junior High School', 'Senior High School']))
+                                @if ($status === 'validated_kepsek')
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+                                                <div>
+                                                    Anda memiliki waktu <strong>1 hari</strong> sejak divalidasi kepala sekolah untuk melakukan checker.
+                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktuChecker->translatedFormat('d F Y') }}</strong></div> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @elseif($status === 'pending')
+                                    <div class="alert alert-danger p-2 py-1 m-0">
+                                        Menunggu review dari kepala sekolah terlebih dahulu.
+                                    </div>
+                                @endif
+                            @elseif ($unit === 'Manajemen')
+                                @if ($status === 'pending')
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+                                                <div>
+                                                    Anda memiliki waktu <strong>1 hari</strong> sejak pengajuan untuk melakukan checker.
+                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktuChecker->translatedFormat('d F Y') }}</strong></div> --}}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 @endif
                             @endif
@@ -456,8 +492,8 @@
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
-                                                    Batas waktu untuk melakukan approval adalah <strong>7 hari</strong> sejak disetujui oleh finance.
-                                                    <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div>
+                                                    Batas waktu untuk melakukan approval adalah <strong>2 hari</strong> sejak divalidasi oleh finance.
+                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -496,8 +532,8 @@
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
-                                                    Batas waktu untuk melakukan review adalah <strong>7 hari</strong> sejak disetujui oleh direktur.
-                                                    <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div>
+                                                    Batas waktu untuk melakukan review adalah <strong>2 hari</strong> sejak disetujui oleh direktur.
+                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
                                                 </div>
                                             </div>
                                         </div>

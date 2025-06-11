@@ -114,7 +114,7 @@
 
                 <div class="mb-3">
                     <label for="catatan" class="form-label">Catatan</label>
-                    <textarea name="catatan" class="form-control" rows="3"></textarea>
+                    <textarea id="catatan" name="catatan" class="form-control" rows="5"></textarea>
                 </div>
 
                 <div class="text-end">
@@ -243,6 +243,26 @@
                 });
         }
     });
+    </script>
+    <script>
+        const textarea = document.getElementById('catatan');
+
+        textarea.addEventListener('keydown', function (e) {
+            // Jika user menekan Enter
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Hindari enter default
+                const lines = textarea.value.split('\n');
+                const newLineNumber = lines.length + 1;
+                textarea.value += `\n${newLineNumber}. `;
+            }
+        });
+
+        // Tambah 1. otomatis di awal
+        textarea.addEventListener('focus', function () {
+            if (textarea.value.trim() === '') {
+                textarea.value = '1. ';
+            }
+        });
     </script>
 
     <script>

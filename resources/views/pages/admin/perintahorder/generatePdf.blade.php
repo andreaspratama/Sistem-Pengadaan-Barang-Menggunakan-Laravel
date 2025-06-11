@@ -199,7 +199,7 @@
         <tr>
             <td style="width: 60%;">
                 <strong>Catatan Tambahan:</strong><br>
-                {{$po->catatan}}
+                {!! nl2br(e($po->catatan)) !!}
             </td>
             <td>
                 <table style="width: 100%;">
@@ -216,7 +216,7 @@
 
     <div style="font-family: Arial, sans-serif; font-size: 12px;">
         <div style="margin-bottom: 10px;">
-            Tanggal <span style="text-decoration: underline;">.....................................</span>
+            Tanggal: <span>{{ \Carbon\Carbon::parse($po->tanggal)->locale('id')->translatedFormat('d F Y') }}</span>
         </div>
 
         <div style="margin-bottom: 60px;">

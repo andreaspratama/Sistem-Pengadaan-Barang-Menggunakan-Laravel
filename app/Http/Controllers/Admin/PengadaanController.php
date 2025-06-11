@@ -357,17 +357,16 @@ class PengadaanController extends Controller
             'komentar' => $request->komentar ?? $this->getKomentarByStatus($status),
         ]);
 
-        return back()->with('success', 'Status berhasil diperbarui.');
+        return back()->with('success', 'Status updated successfully.');
     }
 
     private function getKomentarByStatus($status)
     {
         return [
-            'purchased' => 'Barang dibeli oleh procurement',
-            'distributed' => 'Barang telah didistribusikan',
-            'accepted' => 'Barang sudah diterima',
-            'completed' => 'Selesai diterima oleh unit',
-        ][$status] ?? 'Status diperbarui';
+            'purchased' => 'Being purchased by procurement',
+            'distributed' => 'Has been distributed by procurement',
+            'completed' => 'Has been received by the unit all complete, procurement is complete',
+        ][$status] ?? null;
     }
 
     // UPDATE STATUS ACCEPTED WITH NOTE
@@ -387,7 +386,7 @@ class PengadaanController extends Controller
             'komentar' => $request->komentar ?? $this->getKomentarByStatus($status),
         ]);
 
-        return back()->with('success', 'Status diterima dengan catatan.');
+        return back()->with('success', 'Status updated successfully.');
     }
 
 
