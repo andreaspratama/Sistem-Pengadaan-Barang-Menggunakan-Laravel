@@ -66,24 +66,33 @@ class KategoriController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Kategori $kategori)
+    public function edit(string $id)
     {
-        //
+        $kategori = Kategori::findOrFail($id);
+
+        return view('pages.admin.kategori.edit', compact('kategori'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Kategori $kategori)
+    public function update(Request $request, string $id)
     {
-        //
+        $data = $request->all();
+        $kategori = Kategori::findOrFail($id);
+        $kategori->update($data);
+
+        return redirect()->route('kategori.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Kategori $kategori)
+    public function destroy(string $id)
     {
-        //
+        $kategori = Kategori::findOrFail($id);
+        $kategori->delete();
+
+        return redirect()->route('kategori.index');
     }
 }
