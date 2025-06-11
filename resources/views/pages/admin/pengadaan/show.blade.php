@@ -18,7 +18,7 @@
             </div>
             <div class="card-body">
                 {{--  --}}
-                @if (Auth::user()->role === 'Procurement')
+                @if (in_array(Auth::user()->role, ['Procurement', 'Staff Procurement']))
                     <div class="d-flex gap-2 mt-3">
                         @if ($pengadaan->status === 'finish_procurement')
                             <form action="{{ route('pengadaan.updateStatus', [$pengadaan->id, 'purchased']) }}" method="POST">

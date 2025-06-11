@@ -32,10 +32,10 @@ Route::prefix('admin')
             Route::resource('ta', TaController::class);
 
             // KATEGORI
-            Route::resource('kategori', KategoriController::class)->middleware('UserAkses:Admin,Procurement');
+            Route::resource('kategori', KategoriController::class)->middleware('UserAkses:Admin,Procurement,Staff Procurement');
 
             // VENDOR
-            Route::resource('vendor', VendorController::class)->middleware('UserAkses:Admin,Procurement');
+            Route::resource('vendor', VendorController::class)->middleware('UserAkses:Admin,Procurement,Staff Procurement');
 
             // USER
             Route::resource('user', UserController::class);
