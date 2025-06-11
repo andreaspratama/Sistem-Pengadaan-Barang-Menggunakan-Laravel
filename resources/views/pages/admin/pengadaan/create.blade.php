@@ -63,7 +63,7 @@
                                     <input type="text" class="form-control" name="items[0][merk]" placeholder="Merk">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">Fungsi</label>
+                                    <label class="form-label fw-bold">Fungsi / Keterangan</label>
                                     <input type="text" class="form-control" name="items[0][fungsi]" placeholder="Fungsi" required>
                                 </div>
                                 <div class="col-md-4">
