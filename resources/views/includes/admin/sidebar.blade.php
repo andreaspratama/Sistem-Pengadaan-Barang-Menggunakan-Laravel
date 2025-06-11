@@ -41,7 +41,7 @@
 
                 </li>
                 
-                @if (in_array(Auth::user()->role, ['Admin', 'Procurement']))
+                @if (in_array(Auth::user()->role, ['Admin', 'Procurement', 'Staff Procurement']))
                     <li
                         class="sidebar-item  has-sub">
                         <a href="#" class='sidebar-link'>
@@ -51,7 +51,7 @@
                         
                         <ul class="submenu ">
                             
-                            @if (in_array(Auth::user()->role, ['Admin', 'Procurement']))
+                            @if (in_array(Auth::user()->role, ['Admin', 'Procurement', 'Staff Procurement']))
                                 <li class="submenu-item  ">
                                     <a href="{{route('vendor.index')}}" class="submenu-link">Vendor</a>
                                 </li>
@@ -93,7 +93,7 @@
                     
 
                 </li>
-                @if (in_array(Auth::user()->role, ['Admin', 'Procurement']))
+                @if (in_array(Auth::user()->role, ['Admin', 'Procurement', 'Staff Procurement']))
                     <li
                         class="sidebar-item  has-sub">
                         <a href="#" class='sidebar-link'>

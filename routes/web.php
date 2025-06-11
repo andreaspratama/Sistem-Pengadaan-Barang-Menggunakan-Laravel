@@ -72,9 +72,9 @@ Route::prefix('admin')
             // PENGADAAN PRE ORDER
             Route::get('/perintahorders/barang/{pengadaanId}/{vendorId}', [PerintahorderController::class, 'getBarangByPengadaanAndVendor']);
             Route::get('/perintahorders/vendors/{pengadaan_id}', [PerintahorderController::class, 'getVendorsByPengadaan']);
-            Route::get('perintahorder/data', [PerintahorderController::class, 'getData'])->name('perintahorder.data')->middleware('UserAkses:Admin,Procurement');
-            Route::get('generatePdf/{id}', [PerintahorderController::class, 'generatePdf'])->name('generatePdf')->middleware('UserAkses:Admin,Procurement');
-            Route::resource('perintahorder', PerintahorderController::class)->middleware('UserAkses:Admin,Procurement');
+            Route::get('perintahorder/data', [PerintahorderController::class, 'getData'])->name('perintahorder.data')->middleware('UserAkses:Admin,Procurement,Staff Procurement');
+            Route::get('generatePdf/{id}', [PerintahorderController::class, 'generatePdf'])->name('generatePdf')->middleware('UserAkses:Admin,Procurement,Staff Procurement');
+            Route::resource('perintahorder', PerintahorderController::class)->middleware('UserAkses:Admin,Procurement,Staff Procurement');
 
             Route::post('/pengadaan/{id}/status/{status}', [PengadaanController::class, 'updateStatus'])->name('pengadaan.updateStatus');
             Route::post('/pengadaan/{id}/status-with-note/{status}', [PengadaanController::class, 'updateStatusWithNote'])->name('pengadaan.updateStatusWithNote');
