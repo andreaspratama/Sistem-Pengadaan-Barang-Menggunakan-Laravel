@@ -38,7 +38,7 @@
                     <label class="form-label fw-semibold">Role</label>
                     <select name="role" class="form-select" required>
                         <option disabled>-- Pilih Role --</option>
-                        @foreach(['Director', 'Finance', 'Procurement', 'Staff Procurement', 'Kepala Sekolah', 'Checker', 'Kabid'] as $role)
+                        @foreach(['Director', 'Finance', 'Procurement', 'Staff Procurement', 'Kepala Sekolah', 'Checker', 'Kabid', 'Admin Keu'] as $role)
                             <option value="{{ $role }}" {{ $user->role === $role ? 'selected' : '' }}>{{ $role }}</option>
                         @endforeach
                     </select>

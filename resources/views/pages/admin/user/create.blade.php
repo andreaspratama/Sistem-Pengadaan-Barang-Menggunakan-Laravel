@@ -42,6 +42,7 @@
                         <option value="Procurement">Procurement</option>
                         <option value="Staff Procurement">Staff Procurement</option>
                         <option value="Kepala Sekolah">Kepala Sekolah</option>
+                        <option value="Admin Keu">Admin Keuangan</option>
                         <option value="Checker">Checker</option>
                         <option value="Kabid">Kabid</option>
                     </select>
