@@ -37,7 +37,7 @@
                     </div>
                 @endif
                     @php
-                        $roleTerlarang = ['Procurement', 'Director', 'Finance'];
+                        $roleTerlarang = ['Procurement', 'Director', 'Finance', 'Staff Procurement'];
                     @endphp
                     @if ($pengadaan->status === 'distributed' && !in_array(Auth::user()->role, $roleTerlarang))
                         <form action="{{ route('pengadaan.updateStatusWithNote', [$pengadaan->id, 'accepted']) }}" method="POST" class="mt-3">
