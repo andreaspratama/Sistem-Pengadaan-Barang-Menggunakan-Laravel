@@ -30,6 +30,7 @@
                         <div><strong>Izin Usaha:</strong> {{ $vendor->ijin_usaha }}</div>
                         <div><strong>NPWP:</strong> {{ $vendor->npwp }}</div>
                         <div><strong>NIK:</strong> {{ $vendor->nik }}</div>
+                        <div><strong>Mechanical, Electrical, and Plumbing:</strong> {{ $vendor->mep }}</div>
                     </div>
                 </div>
 

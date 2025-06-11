@@ -57,6 +57,10 @@
                                 <label for="nik" class="block form-label">NIK</label>
                                 <input type="text" name="nik" id="nik" class="mt-1 block w-full border rounded p-2 form-control">
                             </div>
+                            <div class="mb-3">
+                                <label for="mep" class="block form-label">Mechanical, Electrical, and Plumbing</label>
+                                <input type="text" name="mep" id="mep" class="mt-1 block w-full border rounded p-2 form-control">
+                            </div>
                         </div>
 
                         <div class="mb-3">

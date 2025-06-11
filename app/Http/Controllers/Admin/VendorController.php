@@ -55,7 +55,7 @@ class VendorController extends Controller
         $data = $request->all();
         Vendor::create($data);
 
-        return redirect()->route('vendor.index');
+        return redirect()->route('vendor.index')->with('success', 'Vendor berhasil ditambahkan.');
     }
 
     /**
