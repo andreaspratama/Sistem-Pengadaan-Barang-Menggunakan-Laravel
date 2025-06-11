@@ -55,15 +55,17 @@
                                 <li class="submenu-item  ">
                                     <a href="{{route('vendor.index')}}" class="submenu-link">Vendor</a>
                                 </li>
+                                <li class="submenu-item  ">
+                                    <a href="{{route('kategori.index')}}" class="submenu-link">Kategori</a>
+                                </li>
                             @endif
 
                             @if (Auth::user()->role == 'Admin')
                                 <li class="submenu-item  ">
                                     <a href="{{route('ta.index')}}" class="submenu-link">Tahun Ajaran</a>
                                 </li>
-
                                 <li class="submenu-item  ">
-                                    <a href="{{route('kategori.index')}}" class="submenu-link">Kategori</a>
+                                    <a href="{{route('user.index')}}" class="submenu-link">User</a>
                                 </li>
                             @endif
                             

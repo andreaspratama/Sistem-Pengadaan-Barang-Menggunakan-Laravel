@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Admin\TaController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -31,13 +32,13 @@ Route::prefix('admin')
             Route::resource('ta', TaController::class);
 
             // KATEGORI
-            Route::resource('kategori', KategoriController::class);
+            Route::resource('kategori', KategoriController::class)->middleware('UserAkses:Admin,Procurement');
 
             // VENDOR
             Route::resource('vendor', VendorController::class)->middleware('UserAkses:Admin,Procurement');
 
-            // FORM VENDOR
-            Route::resource('formvendor', FormvendorController::class);
+            // USER
+            Route::resource('user', UserController::class);
 
             // APROVAL
             // KEPSEK
