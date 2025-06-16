@@ -73,8 +73,18 @@
                     <ul class="list-group">
                         @foreach ($pengadaan->approvalLogs as $log)
                             <li class="list-group-item">
-                                <span class="badge bg-success">{{ ucfirst($log->status) }}</span>
-                                by <strong>{{ $log->role }}</strong>  "{{ $log->komentar }}" <br>
+                                @if ($log->status === 'rejected')
+                                    <span class="badge bg-danger">{{ ucfirst($log->status) }}</span>
+                                @elseif ($log->status === 'Finish Review')
+                                    <span class="badge bg-secondary">{{ ucfirst($log->status) }}</span>
+                                @elseif ($log->status === 'purchased')
+                                    <span class="badge bg-warning">{{ ucfirst($log->status) }}</span>
+                                @elseif ($log->status === 'distributed')
+                                    <span class="badge bg-info">{{ ucfirst($log->status) }}</span>
+                                @else
+                                    <span class="badge bg-success">{{ ucfirst($log->status) }}</span>
+                                @endif
+                                by <strong>{{ $log->role }}</strong>  {{ $log->komentar }} <br>
                                 <small>{{ \Carbon\Carbon::parse($log->tanggal_approval)->format('d M Y') }}</small>
                             </li>
                         @endforeach
@@ -125,11 +135,23 @@
                             'role' => 'Finance',
                             'status' => 'validated',
                         ],
+                        'rejected_finance' => [
+                            'class' => 'danger',
+                            'text' => 'Rejected By Finance',
+                            'role' => 'Finance',
+                            'status' => 'rejected',
+                        ],
                         'approved_director' => [
                             'class' => 'success',
                             'text' => 'Approved By Director',
                             'role' => 'Director',
                             'status' => 'approved',
+                        ],
+                        'rejected_director' => [
+                            'class' => 'danger',
+                            'text' => 'Rejected by director the procurement process was not continued',
+                            'role' => 'Director',
+                            'status' => 'rejected',
                         ],
                         'finish_procurement' => [
                             'class' => 'success',
@@ -164,6 +186,12 @@
                     ];
                 @endphp
 
+                @if ($pengadaan->status === 'rejected_finance')
+                    <div class="alert alert-warning py-2 px-3 text-center small fw-semibold rounded-pill shadow-sm mt-3">
+                        Silahkan menunggu untuk approve pengajuan RAB
+                    </div>
+                @endif
+
                 @if (array_key_exists($pengadaan->status, $statusBadges))
                     @php
                         $badge = $statusBadges[$pengadaan->status];
@@ -180,7 +208,7 @@
 
                     @if ($log)
                         <div class="alert alert-{{ $badge['class'] }} py-2 px-3 text-center small fw-semibold rounded-pill shadow-sm mt-3">
-                            {{ $badge['text'] }} pada {{ \Carbon\Carbon::parse($log->tanggal_approval)->translatedFormat('d F Y') }}
+                            {{ $badge['text'] }} in {{ \Carbon\Carbon::parse($log->tanggal_approval)->translatedFormat('d F Y') }}
                         </div>
                     @endif
                 @endif
@@ -295,7 +323,7 @@
                                                             <input type="text" name="catatan" placeholder="Alasan ditolak" class="form-control form-control-sm mb-1" required>
                                                             <button class="btn btn-danger btn-sm">Tolak</button>
                                                         </form> --}}
-                                                    @if ($pengadaan->status === 'validated_finance')
+                                                    @if ($pengadaan->status === 'rejected_finance')
                                                         <form action="{{ route('pengadaan.approveDirector', $item->id) }}" method="POST" style="display:inline;">
                                                             @csrf
                                                             <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
@@ -373,6 +401,7 @@
                             $batasWaktuChecker = $tanggalPengajuan->copy()->addDays(1); 
                             $batasWaktuKepsek = $tanggalPengajuan->copy()->addDays(2); 
                             $batasWaktuFinance = $tanggalPengajuan->copy()->addDays(2); 
+                            $batasWaktuPro = $tanggalPengajuan->copy()->addDays(2); 
                         @endphp
                         @if($role === 'Kepala Sekolah' && $status === 'pending')
                             <div class="d-flex justify-content-between align-items-start mb-3">
@@ -476,7 +505,7 @@
                                 @endif
                             @endif
                         @elseif ($role === 'Director')
-                            @if ($status === 'validated_finance')
+                            @if ($status === 'finish_procurement')
                                 @php
                                     $logFinance = $pengadaan->approvalLogs
                                         ->where('status', 'validated')
@@ -492,7 +521,7 @@
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
-                                                    Batas waktu untuk melakukan approval adalah <strong>2 hari</strong> sejak divalidasi oleh finance.
+                                                    Batas waktu untuk melakukan approval dan pencairan dana adalah <strong>5 hari</strong> sejak direview oleh procurement.
                                                     {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
                                                 </div>
                                             </div>
@@ -502,7 +531,7 @@
                                             <i class="bi bi-search"></i> Proses Approval Direktur
                                         </a> --}}
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalDirektur">
-                                            <i class="bi bi-search"></i>Proses Approval Direktur
+                                            <i class="bi bi-search"></i>Proses Approval & Pencairan Direktur
                                         </button>
                                     </div>
                                 @elseif ($unit === 'Manajemen')
@@ -514,16 +543,14 @@
                                         Menunggu validasi dari Finance terlebih dahulu.
                                     </div>
                                 @endif
-                            @endif
-                        @elseif ($role === 'Procurement')
-                            @if ($status === 'approved_director')
+                            @elseif ($status === 'rejected_finance')
                                 @php
-                                    $logDirector = $pengadaan->approvalLogs
-                                        ->where('status', 'approved')
-                                        ->where('role', 'Director')
+                                    $logFinance = $pengadaan->approvalLogs
+                                        ->where('status', 'rejected')
+                                        ->where('role', 'Finance')
                                         ->sortByDesc('tanggal_approval')
                                         ->first();
-                                    $batasWaktu = $logDirector ? \Carbon\Carbon::parse($logDirector->tanggal_approval)->addDays(7) : null;
+                                    $batasWaktu = $logFinance ? \Carbon\Carbon::parse($logFinance->tanggal_approval)->addDays(7) : null;
                                 @endphp
 
                                 @if ($batasWaktu)
@@ -532,7 +559,77 @@
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
-                                                    Batas waktu untuk melakukan review adalah <strong>2 hari</strong> sejak disetujui oleh direktur.
+                                                    Batas waktu untuk melakukan approval dan pencairan dana adalah <strong>5 hari</strong> sejak direview oleh procurement.
+                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- <a href="{{ route('approvalDirektur', $pengadaan->id) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-search"></i> Proses Approval Direktur
+                                        </a> --}}
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalDirektur">
+                                            <i class="bi bi-search"></i>Proses Approve
+                                        </button>
+                                    </div>
+                                @elseif ($unit === 'Manajemen')
+                                    <div class="alert alert-danger p-2 py-1 m-0">
+                                        Menunggu validasi dari Finance terlebih dahulu.
+                                    </div>
+                                @else
+                                    <div class="alert alert-danger p-2 py-1 m-0">
+                                        Menunggu validasi dari Finance terlebih dahulu. rejected
+                                    </div>
+                                @endif
+                            @endif
+                        @elseif ($role === 'Procurement')
+                            @if ($status === 'validated_finance')
+                                @php
+                                    $logFinance = $pengadaan->approvalLogs
+                                        ->where('status', 'validated')
+                                        ->where('role', 'Finance')
+                                        ->sortByDesc('tanggal_approval')
+                                        ->first();
+                                    $batasWaktuPro = $logFinance ? \Carbon\Carbon::parse($logFinance->tanggal_approval)->addDays(7) : null;
+                                @endphp
+
+                                @if ($batasWaktuPro)
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+                                                <div>
+                                                    Batas waktu untuk melakukan review adalah <strong>2 hari</strong> sejak divalidasi oleh finance.
+                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- <a href="{{ route('approvalProcurement', $pengadaan->id) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-search"></i> Proses Approval Procurement
+                                        </a> --}}
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalProcurement">
+                                            <i class="bi bi-search"></i>Finish Preview
+                                        </button>
+                                    </div>
+                                @endif
+                            @elseif ($status === 'approved_director')
+                                @php
+                                    $logFinance = $pengadaan->approvalLogs
+                                        ->where('status', 'approved')
+                                        ->where('role', 'Director')
+                                        ->sortByDesc('tanggal_approval')
+                                        ->first();
+                                    $batasWaktuPro = $logFinance ? \Carbon\Carbon::parse($logFinance->tanggal_approval)->addDays(7) : null;
+                                @endphp
+
+                                @if ($batasWaktuPro)
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+                                                <div>
+                                                    Batas waktu untuk melakukan review adalah <strong>2 hari</strong> sejak divalidasi oleh finance.
                                                     {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
                                                 </div>
                                             </div>
@@ -550,7 +647,7 @@
                                 <div class="alert alert-info p-2 py-1 m-0">
                                     Menunggu validasi dari Finance terlebih dahulu.
                                 </div>
-                            @elseif($status === 'validated_finance')
+                            @elseif($status === 'rejected_finance')
                                 <div class="alert alert-info p-2 py-1 m-0">
                                     Menunggu persetujuan dari Direktur terlebih dahulu.
                                 </div>
@@ -656,6 +753,7 @@
                 <select name="status" id="status" class="form-select" required>
                     <option value="">-- Select Status --</option>
                     <option value="approved">Approve</option>
+                    <option value="rejected">Rejected</option>
                 </select>
             </div>
 

@@ -197,13 +197,6 @@
         }
     @endphp
 
-    @if ($noPending)
-        <div class="alert alert-success mt-3">
-            <i class="bi bi-check-circle me-2"></i>
-            Tidak ada pengadaan yang perlu Anda approve saat ini. 👍
-        </div>
-    @endif
-
 
     <!-- Tabel Pengadaan Terbaru -->
     {{-- <div class="card border-0 shadow">
