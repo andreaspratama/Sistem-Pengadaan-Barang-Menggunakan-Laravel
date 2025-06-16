@@ -143,7 +143,7 @@
                     <input type="number" class="form-control" name="items[${index}][jumlah]" placeholder="Jumlah" required>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label fw-bold">RAB</label>
+                    <label class="form-label fw-bold">RAB / Item</label>
                     <input type="text" class="form-control anggaran-input" name="items[${index}][rab]" placeholder="RAB">
                 </div>
                 <div class="col-md-4">
