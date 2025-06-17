@@ -188,7 +188,7 @@
 
                 @if ($pengadaan->status === 'rejected_finance')
                     <div class="alert alert-warning py-2 px-3 text-center small fw-semibold rounded-pill shadow-sm mt-3">
-                        Silahkan menunggu untuk approve pengajuan RAB
+                        Please wait for approval of the RAB submission to the director
                     </div>
                 @endif
 
@@ -234,6 +234,7 @@
                         <thead class="table-primary">
                             <tr>
                                 <th>No</th>
+                                <th>Status RAB</th>
                                 <th>Nama</th>
                                 <th>Fungsi</th>
                                 <th>Ukuran</th>
@@ -259,6 +260,13 @@
                                 @endphp
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>
+                                        @if ($pengadaan->status_rab === 'Tidak Ada di RAB')
+                                            <span class="badge text-bg-danger">{{ $pengadaan->status_rab }}</span>
+                                        @else
+                                            <span class="badge text-bg-success">{{ $pengadaan->status_rab }}</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $item->nama }}</td>
                                     <td>{{ $item->fungsi }}</td>
                                     <td>{{ $item->ukuran }}</td>
@@ -405,15 +413,15 @@
                         @endphp
                         @if($role === 'Kepala Sekolah' && $status === 'pending')
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                     <div class="d-flex align-items-start">
                                         <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                         <div>
                                             Anda memiliki waktu <strong>2 hari</strong> sejak pengajuan untuk melakukan validasi pengajuan.
-                                            {{-- <div>Batas waktu: <strong>{{ $batasWaktuKepsek->translatedFormat('d F Y') }}</strong></div> --}}
+                                            <div>Batas waktu: <strong>{{ $batasWaktuKepsek->translatedFormat('d F Y') }}</strong></div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 {{-- <a href="{{ route('approvalFinance', $pengadaan->id) }}" class="btn btn-primary btn-sm">
                                     <i class="bi bi-search"></i> Proses Validasi Finance
@@ -426,15 +434,15 @@
                             @if (in_array($unit, ['Pre School Gajahmada', 'Pre School Tanah Mas', 'Elementary', 'Junior High School', 'Senior High School']))
                                 @if ($status === 'validated_kepsek')
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
                                                     Anda memiliki waktu <strong>2 hari</strong> sejak sudah dilakukan checker untuk melakukan validasi Finance.
-                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div> --}}
+                                                    <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- <a href="{{ route('approvalFinance', $pengadaan->id) }}" class="btn btn-primary btn-sm">
                                             <i class="bi bi-search"></i> Proses Validasi Finance
@@ -454,10 +462,10 @@
                                         <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
-                                                <div>
+                                                {{-- <div>
                                                     Anda memiliki waktu <strong>2 hari</strong> sejak sudah dilakukan checker untuk melakukan validasi Finance.
-                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div> --}}
-                                                </div>
+                                                    <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
+                                                </div> --}}
                                             </div>
                                         </div>
 
@@ -477,10 +485,10 @@
                                         <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
-                                                <div>
+                                                {{-- <div>
                                                     Anda memiliki waktu <strong>1 hari</strong> sejak divalidasi kepala sekolah untuk melakukan checker.
-                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktuChecker->translatedFormat('d F Y') }}</strong></div> --}}
-                                                </div>
+                                                    <div>Batas waktu: <strong>{{ $batasWaktuChecker->translatedFormat('d F Y') }}</strong></div>
+                                                </div> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -495,10 +503,10 @@
                                         <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
-                                                <div>
+                                                {{-- <div>
                                                     Anda memiliki waktu <strong>1 hari</strong> sejak pengajuan untuk melakukan checker.
-                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktuChecker->translatedFormat('d F Y') }}</strong></div> --}}
-                                                </div>
+                                                    <div>Batas waktu: <strong>{{ $batasWaktuChecker->translatedFormat('d F Y') }}</strong></div>
+                                                </div> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -517,22 +525,22 @@
 
                                 @if ($batasWaktu)
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
                                                     Batas waktu untuk melakukan approval dan pencairan dana adalah <strong>5 hari</strong> sejak direview oleh procurement.
-                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
+                                                    <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- <a href="{{ route('approvalDirektur', $pengadaan->id) }}" class="btn btn-primary btn-sm">
                                             <i class="bi bi-search"></i> Proses Approval Direktur
                                         </a> --}}
-                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalDirektur">
+                                        {{-- <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalDirektur">
                                             <i class="bi bi-search"></i>Proses Approval & Pencairan Direktur
-                                        </button>
+                                        </button> --}}
                                     </div>
                                 @elseif ($unit === 'Manajemen')
                                     <div class="alert alert-danger p-2 py-1 m-0">
@@ -555,15 +563,15 @@
 
                                 @if ($batasWaktu)
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
                                                     Batas waktu untuk melakukan approval dan pencairan dana adalah <strong>5 hari</strong> sejak direview oleh procurement.
-                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
+                                                    <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- <a href="{{ route('approvalDirektur', $pengadaan->id) }}" class="btn btn-primary btn-sm">
                                             <i class="bi bi-search"></i> Proses Approval Direktur
@@ -595,15 +603,15 @@
 
                                 @if ($batasWaktuPro)
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
                                                     Batas waktu untuk melakukan review adalah <strong>2 hari</strong> sejak divalidasi oleh finance.
-                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
+                                                    <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- <a href="{{ route('approvalProcurement', $pengadaan->id) }}" class="btn btn-primary btn-sm">
                                             <i class="bi bi-search"></i> Proses Approval Procurement
@@ -625,15 +633,15 @@
 
                                 @if ($batasWaktuPro)
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
                                                 <div>
                                                     Batas waktu untuk melakukan review adalah <strong>2 hari</strong> sejak divalidasi oleh finance.
-                                                    {{-- <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div> --}}
+                                                    <div>Batas waktu: <strong>{{ $batasWaktu->translatedFormat('d F Y') }}</strong></div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- <a href="{{ route('approvalProcurement', $pengadaan->id) }}" class="btn btn-primary btn-sm">
                                             <i class="bi bi-search"></i> Proses Approval Procurement

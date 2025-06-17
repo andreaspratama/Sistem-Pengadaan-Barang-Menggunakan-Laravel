@@ -64,7 +64,8 @@
                         <th>Mengajukan</th>
                         <th>Unit</th>
                         <th>Nama</th>
-                        <th>Tangagl Pengajuan</th>
+                        <th>Tanggal Pengajuan</th>
+                        <th>Status RAB</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -132,6 +133,7 @@
                     { data: 'unit_label', name: 'unit' },
                     { data: 'keterangan', name: 'keterangan' },
                     { data: 'tanggal_pengajuan', name: 'tanggal_pengajuan' },
+                    { data: 'status_label_rab', name: 'status_rab', orderable: false, searchable: false },
                     { data: 'status_label', name: 'status', orderable: false, searchable: false },
                     { data: 'action', name: 'action', orderable: false, searchable: false },
                 ]

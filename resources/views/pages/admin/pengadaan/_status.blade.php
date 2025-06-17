@@ -21,4 +21,8 @@
         <span class="badge bg-info">Accepted</span>
     @elseif($pengadaan->status === 'completed')
         <span class="badge bg-success">Complated</span>
+    @elseif($pengadaan->status_rab === 'Ada di RAB')
+        <span class="badge bg-success">Ada di RAB</span>
+    @elseif($pengadaan->status_rab === 'Tidak Ada di RAB')
+        <span class="badge bg-danger">Tidak Ada di RAB</span>
 @endif

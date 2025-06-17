@@ -46,6 +46,15 @@
                         <input type="text" id="keterangan" class="form-control" name="keterangan" placeholder="Keterangan pengadaan..." required>
                     </div>
 
+                    <div class="mb-3 mt-3">
+                        <label for="status_rab" class="form-label fw-bold">Status di RAB</label>
+                        <select id="status_rab" class="form-select" name="status_rab" required>
+                            <option selected disabled>-- Pilih Status RAB --</option>
+                            <option value="Ada di RAB">Ada di RAB</option>
+                            <option value="Tidak Ada di RAB">Tidak Ada di RAB</option>
+                        </select>
+                    </div>
+
                     <div id="item-wrapper">
                         <div class="item-group card p-3 mb-3 shadow-sm position-relative">
                             <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>

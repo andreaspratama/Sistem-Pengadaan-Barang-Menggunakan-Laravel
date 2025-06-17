@@ -62,10 +62,13 @@ class PengadaanController extends Controller
                 ->addColumn('status_label', function ($row) {
                     return view('pages.admin.pengadaan._status', compact('row'))->render();
                 })
+                ->addColumn('status_label_rab', function ($row) {
+                    return view('pages.admin.pengadaan._statusRab', compact('row'))->render();
+                })
                 ->addColumn('action', function ($row) {
                     return view('pages.admin.pengadaan._action', compact('row'))->render();
                 })
-                ->rawColumns(['status_label', 'action', 'unit_label'])
+                ->rawColumns(['status_label', 'status_label_rab', 'action', 'unit_label'])
                 ->make(true);
 
         } catch (\Exception $e) {
@@ -106,6 +109,7 @@ class PengadaanController extends Controller
             'tanggal_pengajuan' => now(),
             'status' => 'pending', // default status awal
             'keterangan' => $request->keterangan,
+            'status_rab' => $request->status_rab,
             'unit' => $request->unit,
         ]);
     
