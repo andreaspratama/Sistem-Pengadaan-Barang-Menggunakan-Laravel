@@ -482,15 +482,15 @@
                             @if (in_array($unit, ['Pre School Gajahmada', 'Pre School Tanah Mas', 'Elementary', 'Junior High School', 'Senior High School']))
                                 @if ($status === 'validated_kepsek')
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
-                                                {{-- <div>
+                                                <div>
                                                     Anda memiliki waktu <strong>1 hari</strong> sejak divalidasi kepala sekolah untuk melakukan checker.
                                                     <div>Batas waktu: <strong>{{ $batasWaktuChecker->translatedFormat('d F Y') }}</strong></div>
-                                                </div> --}}
+                                                </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 @elseif($status === 'pending')
                                     <div class="alert alert-danger p-2 py-1 m-0">
@@ -500,15 +500,15 @@
                             @elseif ($unit === 'Manajemen')
                                 @if ($status === 'pending')
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
-                                                {{-- <div>
+                                                <div>
                                                     Anda memiliki waktu <strong>1 hari</strong> sejak pengajuan untuk melakukan checker.
                                                     <div>Batas waktu: <strong>{{ $batasWaktuChecker->translatedFormat('d F Y') }}</strong></div>
-                                                </div> --}}
+                                                </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 @endif
                             @endif
