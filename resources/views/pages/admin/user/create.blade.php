@@ -38,6 +38,7 @@
                     <select name="role" id="role" class="form-select" required>
                         <option disabled selected>-- Pilih Role --</option>
                         <option value="Director">Direktur</option>
+                        <option value="Asdir">Asisten Direktur</option>
                         <option value="Finance">Finance</option>
                         <option value="Procurement">Procurement</option>
                         <option value="Staff Procurement">Staff Procurement</option>

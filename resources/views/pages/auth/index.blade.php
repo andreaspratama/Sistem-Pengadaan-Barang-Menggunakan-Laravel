@@ -35,7 +35,6 @@
                 </div>
             @endif
             <h1 class="auth-title">Log in.</h1>
-            <p class="auth-subtitle mb-5">Log in with your data that you entered during registration.</p>
 
             <form action="{{route('prosLogin')}}" method="POST">
                 @csrf
