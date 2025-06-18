@@ -129,11 +129,11 @@
                             'role' => 'Kepala Sekolah',
                             'status' => 'validated',
                         ],
-                        'validated_finance' => [
+                        'verified_finance' => [
                             'class' => 'success',
-                            'text' => 'Validated By Finance',
+                            'text' => 'Verified By Finance',
                             'role' => 'Finance',
-                            'status' => 'validated',
+                            'status' => 'verified',
                         ],
                         'rejected_finance' => [
                             'class' => 'danger',
@@ -448,7 +448,7 @@
                                             <i class="bi bi-search"></i> Proses Validasi Finance
                                         </a> --}}
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                            <i class="bi bi-search"></i>Proses Validasi Finance
+                                            <i class="bi bi-search"></i>Proses Verifikasi Finance
                                         </button>
                                     </div>
                                 @elseif($status === 'pending')
@@ -473,7 +473,7 @@
                                             <i class="bi bi-search"></i> Proses Validasi Finance
                                         </a> --}}
                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                            <i class="bi bi-search"></i>Proses Validasi Finance
+                                            <i class="bi bi-search"></i>Proses Verifikasi Finance
                                         </button>
                                     </div>
                                 @endif
@@ -591,10 +591,10 @@
                                 @endif
                             @endif
                         @elseif ($role === 'Procurement')
-                            @if ($status === 'validated_finance')
+                            @if ($status === 'verified_finance')
                                 @php
                                     $logFinance = $pengadaan->approvalLogs
-                                        ->where('status', 'validated')
+                                        ->where('status', 'verified')
                                         ->where('role', 'Finance')
                                         ->sortByDesc('tanggal_approval')
                                         ->first();
@@ -691,7 +691,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Validasi Kepala Sekolah</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Validation Kepala Sekolah</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -702,8 +702,8 @@
                 <label for="status" class="form-label fw-semibold">Validation Status</label>
                 <select name="status" id="status" class="form-select" required>
                     <option value="">-- Select Status --</option>
-                    <option value="validated">Validasi Oke</option>
-                    <option value="rejected">Tolak</option>
+                    <option value="validated">Validated</option>
+                    <option value="rejected">Reject</option>
                 </select>
             </div>
 
@@ -720,7 +720,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Validasi Finance</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Verified Finance</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -728,11 +728,11 @@
             @csrf
 
             <div class="mb-3">
-                <label for="status" class="form-label fw-semibold">Validation Status</label>
+                <label for="status" class="form-label fw-semibold">Verified Status</label>
                 <select name="status" id="status" class="form-select" required>
                     <option value="">-- Select Status --</option>
-                    <option value="validated">Validation OK</option>
-                    <option value="rejected">Reject</option>
+                    <option value="verified">Verified</option>
+                    <option value="rejected">Reject - Outside RAB</option>
                 </select>
             </div>
 
@@ -761,7 +761,7 @@
                 <select name="status" id="status" class="form-select" required>
                     <option value="">-- Select Status --</option>
                     <option value="approved">Approve</option>
-                    <option value="rejected">Rejected</option>
+                    <option value="rejected">Reject</option>
                 </select>
             </div>
 

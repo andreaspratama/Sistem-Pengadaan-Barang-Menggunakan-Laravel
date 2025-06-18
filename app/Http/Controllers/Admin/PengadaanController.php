@@ -220,7 +220,7 @@ class PengadaanController extends Controller
     {
         $request->validate([
             'komentar' => 'nullable|string',
-            'status' => 'required|in:validated,approved,rejected',
+            'status' => 'required|in:validated,approved,rejected,verified',
         ]);
 
         $pengadaan = Pengadaan::findOrFail($id);
@@ -237,7 +237,7 @@ class PengadaanController extends Controller
 
         // Update status akhir di pengadaan
         $statusMap = [
-            'Finance' => ['validated' => 'validated_finance', 'rejected' => 'rejected_finance'],
+            'Finance' => ['validated' => 'validated_finance', 'rejected' => 'rejected_finance', 'verified' => 'verified_finance'],
             'Direktur' => ['approved' => 'approved_director', 'rejected' => 'rejected_director'],
             'Procurement' => ['validated' => 'validated_procurement', 'rejected' => 'rejected_procurement'],
         ];

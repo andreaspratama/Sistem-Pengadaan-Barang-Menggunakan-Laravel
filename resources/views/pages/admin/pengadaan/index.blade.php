@@ -24,7 +24,7 @@
                             <option value="">-- Filter Status --</option>
                             <option value="pending">Pending</option>
                             <option value="validated_kepsek">Validated Kepala Sekolah</option>
-                            <option value="validated_finance">Validated Finance</option>
+                            <option value="verified_finance">Verified Finance</option>
                             <option value="approved_director">Approved Director</option>
                             <option value="finish_procurement">Finish Review Procurement</option>
                             <option value="purchased">Purchased</option>
