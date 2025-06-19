@@ -1,5 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Keren Animasi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      border-radius: 20px;
+      backdrop-filter: blur(14px);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.2);
+      animation: fadeIn 1.5s ease forwards;
+      opacity: 0;
+    }
+
+    .login-box h2 {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-control {
+      background-color: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      transition: 0.3s;
+    }
+
+    .form-control:focus {
+      background-color: rgba(255,255,255,0.25);
+      box-shadow: 0 0 10px #6a11cb;
+    }
+
+    .btn-login {
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+      border: none;
+      font-weight: 600;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(106, 17, 203, 0.4);
+    }
+
+    .form-text {
+      color: #ccc;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .floating-icon {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: float 3s ease-in-out infinite;
+      font-size: 40px;
+      color: #fff;
+      opacity: 0.7;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(-50%, 0px);
+      }
+      50% {
+        transform: translate(-50%, -15px);
+      }
+    }
+
+    /* Optional background animation */
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      width: 20px;
+      height: 20px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      animation: rise 10s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% {
+        bottom: -100px;
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        bottom: 110%;
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Icon -->
+  <div class="floating-icon">
+    <img src="{{url('./belakang/assets/compiled/png/logo.png')}}" alt="Logo">
+  </div>
+
+  <!-- Bubbles Background -->
+  <div class="bubble" style="left: 20%; width: 15px; height: 15px; animation-delay: 0s;"></div>
+  <div class="bubble" style="left: 40%; width: 25px; height: 25px; animation-delay: 2s;"></div>
+  <div class="bubble" style="left: 60%; width: 10px; height: 10px; animation-delay: 4s;"></div>
+  <div class="bubble" style="left: 80%; width: 20px; height: 20px; animation-delay: 1s;"></div>
+
+  <!-- Login Box -->
+  <div class="login-box">
+    <h2>Login ke Sistem 🚀</h2>
+    <form action="{{route('prosLogin')}}" method="POST">
+        @csrf
+      <div class="mb-3">
+        <label for="email" class="form-label text-white">Email</label>
+        <input type="email" class="form-control" id="email" placeholder="you@example.com" name="email" value="{{old('email')}}">
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label text-white">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="••••••••" name="password" value="{{old('email')}}">
+      </div>
+      <div class="d-grid mb-3">
+        <button type="submit" class="btn btn-login btn-lg text-white">Login</button>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>
+
+
+
+
+
+{{-- <!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -64,4 +222,4 @@
     </div>
 </body>
 
-</html>
+</html> --}}
