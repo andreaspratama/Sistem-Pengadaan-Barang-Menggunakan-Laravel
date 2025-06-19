@@ -345,7 +345,7 @@
                                                         </form>
                                                     @endif
                                                 @elseif($pengadaan->unit === 'Manajemen')
-                                                    @if ($pengadaan->status === 'validated_finance')
+                                                    @if ($pengadaan->status === 'rejected_finance')
                                                         <form action="{{ route('pengadaan.approveDirector', $item->id) }}" method="POST" style="display:inline;">
                                                             @csrf
                                                             <input type="text" name="catatan" placeholder="Catatan disetujui" class="form-control form-control-sm mb-1" required>
@@ -459,15 +459,15 @@
                             @elseif ($unit === 'Manajemen')
                                 @if ($status === 'pending')
                                     <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
+                                        {{-- <div class="alert alert-warning small p-2 mb-0 me-3 flex-grow-1">
                                             <div class="d-flex align-items-start">
                                                 <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
-                                                {{-- <div>
+                                                <div>
                                                     Anda memiliki waktu <strong>2 hari</strong> sejak sudah dilakukan checker untuk melakukan validasi Finance.
                                                     <div>Batas waktu: <strong>{{ $batasWaktuFinance->translatedFormat('d F Y') }}</strong></div>
-                                                </div> --}}
+                                                </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- <a href="{{ route('approvalFinance', $pengadaan->id) }}" class="btn btn-primary btn-sm">
                                             <i class="bi bi-search"></i> Proses Validasi Finance
