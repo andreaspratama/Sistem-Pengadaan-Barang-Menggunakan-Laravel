@@ -83,6 +83,7 @@ class PerintahorderController extends Controller
                         return [
                             'id' => $item->id,
                             'nama' => $item->nama,
+                            'judul_buku' => $item->judul_buku,
                             'jumlah' => $item->jumlah,
                             'rab' => $item->rab,
                             'catatan_finance' => $item->catatan_finance,

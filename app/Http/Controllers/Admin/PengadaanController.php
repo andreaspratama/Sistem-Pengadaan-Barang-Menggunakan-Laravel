@@ -47,7 +47,9 @@ class PengadaanController extends Controller
                 $query->where('unit', $user->unit);
             }
 
-            $pengadaans = $query->orderBy('id', 'desc')->get();
+            $pengadaans = $query
+                ->orderBy('id', 'desc')
+                ->get();
 
             return DataTables::of($pengadaans)
                 ->addIndexColumn()
@@ -94,13 +96,6 @@ class PengadaanController extends Controller
     {
         $request->validate([
             'keterangan' => 'nullable|string',
-            'items.*.nama' => 'required|string',
-            'items.*.fungsi' => 'string',
-            'items.*.ukuran' => 'min:0',
-            'items.*.type' => 'string|min:0',
-            'items.*.jumlah' => 'required|numeric|min:0',
-            'items.*.rab' => 'required|string|min:0',
-            'items.*.merk' => 'required|string|min:0',
         ]);
     
         // Simpan pengadaan utama
@@ -116,13 +111,17 @@ class PengadaanController extends Controller
         // Simpan item-itemnya
         foreach ($request->items as $item) {
             $pengadaan->items()->create([
-                'nama' => $item['nama'],
-                'fungsi' => $item['fungsi'],
-                'ukuran' => $item['ukuran'],
-                'type' => $item['type'],
-                'jumlah' => $item['jumlah'],
-                'rab' => $item['rab'],
-                'merk' => $item['merk'],
+                'nama' => $item['nama'] ?? null,
+                'fungsi' => $item['fungsi'] ?? null,
+                'ukuran' => $item['ukuran'] ?? null,
+                'type' => $item['type'] ?? null,
+                'jumlah' => $item['jumlah'] ?? null,
+                'rab' => $item['rab'] ?? null,
+                'merk' => $item['merk'] ?? null,
+                'judul_buku' => $item['judul_buku'] ?? null,
+                'isbn' => $item['isbn'] ?? null,
+                'penerbit' => $item['penerbit'] ?? null,
+                'kelas' => $item['kelas'] ?? null,
                 'kategori_id' => $item['kategori_id'],
             ]);
         }
@@ -471,6 +470,39 @@ class PengadaanController extends Controller
         }
 
         return true; // Semua item sudah diperiksa (approved atau rejected)
+    }
+
+    // PENGADAAN BUKU
+    public function pengadaanBuku()
+    {
+        return view('pages.admin.pengadaan.buku');
+    }
+
+    public function tambahBuku()
+    {
+        $kategoris = Kategori::all();
+
+        return view('pages.admin.pengadaan.tambahBuku', compact('kategoris'));
+    }
+
+    public function generatePdfBarang($id)
+    {
+        $pengadaan = Pengadaan::with('items')->findOrFail($id);
+
+        // Hitung total & diskon
+        // $grandTotal = 0;
+        // foreach ($po->pengadaan->items as $item) {
+        //     $grandTotal += $item->anggaran * $item->jumlah;
+        // }
+
+        // $diskonPersen = $po->diskon ?? 0;
+        // $nilaiDiskon = $grandTotal * ($diskonPersen / 100);
+        // $grandTotalAfterDiskon = $grandTotal - $nilaiDiskon;
+
+        $pdf = PDF::loadView('pages.admin.pengadaan.generatePdfBarang', compact('pengadaan'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream();
     }
 
 }

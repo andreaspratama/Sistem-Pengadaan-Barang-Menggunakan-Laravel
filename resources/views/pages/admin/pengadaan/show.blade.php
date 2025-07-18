@@ -67,6 +67,12 @@
                 <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     Riwayat Status
                 </button>
+                @php
+                    $lastApproval = $pengadaan->approvalLogs->last(); // asumsi relasi namanya 'approvals'
+                @endphp
+                @if ($lastApproval && $lastApproval->status === 'verified')
+                    <a href="{{ route('generatePdfBarang', $pengadaan->id) }}" class="btn btn-danger">Download List Barang</a>
+                @endif
                 </p>
                 <div class="collapse" id="collapseExample">
                 <div class="card card-body">
@@ -235,12 +241,14 @@
                             <tr>
                                 <th>No</th>
                                 <th>Status RAB</th>
-                                <th>Nama</th>
+                                <th>Barang</th>
+                                <th>Buku</th>
                                 <th>Fungsi</th>
                                 <th>Ukuran</th>
                                 <th>Type</th>
                                 <th>Jumlah</th>
                                 <th>Merk</th>
+                                <th>Penerbit</th>
                                 <th>RAB / Item</th>
                                 <th>Total</th>
                                 <th>Validasi Finance</th>
@@ -268,11 +276,13 @@
                                         @endif
                                     </td>
                                     <td>{{ $item->nama }}</td>
+                                    <td>{{ $item->judul_buku }}</td>
                                     <td>{{ $item->fungsi }}</td>
                                     <td>{{ $item->ukuran }}</td>
                                     <td>{{ $item->type }}</td>
                                     <td>{{ $item->jumlah }}</td>
                                     <td>{{ $item->merk }}</td>
+                                    <td>{{ $item->penerbit }}</td>
                                     <td>Rp {{ number_format(preg_replace('/\D/', '', $item->rab), 0, ',', '.') }}</td>
                                     <td>Rp {{ number_format($total, 0, ',', '.') }}</td>
                                     <td>
@@ -386,7 +396,7 @@
                         <tfoot>
                             {{-- Baris subtotal --}}
                             <tr>
-                                <td colspan="8" style="text-align: right; font-weight: bold;">Sub Total</td>
+                                <td colspan="11" style="text-align: right; font-weight: bold;">Sub Total</td>
                                 <td style="font-weight: bold;">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>

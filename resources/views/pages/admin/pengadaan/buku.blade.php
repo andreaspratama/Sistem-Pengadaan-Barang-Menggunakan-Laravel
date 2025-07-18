@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title')
-    Pengadaan
+    Pengadaan Buku
 @endsection
 
 @section('content')
@@ -13,9 +13,9 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    List Pengadaan
+                    List Pengadaan Buku
                 </h5>
-                <a href="{{route('pengadaan.create')}}" class="btn btn-primary mt-2">Tambah Pengadaan</a>
+                <a href="{{route('tambahBuku')}}" class="btn btn-primary mt-2">Tambah Pengadaan Buku</a>
             </div>
             <div class="card-body">
                 <div class="row mb-3">
@@ -125,7 +125,6 @@
                         d.unit = $('#filter-unit').val();
                         d.date_start = $('#filter-date-start').val();
                         d.date_end = $('#filter-date-end').val();
-                        d.kategori_id = {{ $kategori_id ?? 'null' }};
                     }
                 },
                 columns: [

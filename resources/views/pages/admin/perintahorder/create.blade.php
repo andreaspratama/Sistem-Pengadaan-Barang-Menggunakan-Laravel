@@ -184,7 +184,7 @@
                         filteredData.forEach((item, i) => {
                             html += `
                                 <tr>
-                                    <td>${item.nama}</td>
+                                    <td>${item.judul_buku || item.nama}</td>
                                     <td>
                                         <input type="number" name="data[${i}][qty]" class="form-control" value="${item.jumlah}" min="1">
                                     </td>

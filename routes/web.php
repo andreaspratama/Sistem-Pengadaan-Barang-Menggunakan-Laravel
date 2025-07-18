@@ -67,6 +67,9 @@ Route::prefix('admin')
 
             // PENGADAAN
             Route::get('pengadaan/data', [PengadaanController::class, 'getData'])->name('pengadaan.data');
+            Route::get('tambahBuku', [PengadaanController::class, 'tambahBuku'])->name('tambahBuku');
+            Route::get('pengadaanBuku', [PengadaanController::class, 'pengadaanBuku'])->name('pengadaanBuku');
+            Route::get('generatePdfBarang/{id}', [PengadaanController::class, 'generatePdfBarang'])->name('generatePdfBarang')->middleware('UserAkses:Admin,Procurement,Staff Procurement');
             Route::resource('pengadaan', PengadaanController::class);
 
             // PENGADAAN PRE ORDER

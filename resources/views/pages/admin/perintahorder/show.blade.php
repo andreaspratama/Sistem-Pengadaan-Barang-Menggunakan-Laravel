@@ -74,6 +74,7 @@
                             <th>Nama Barang</th>
                             <th>Qty</th>
                             <th>Fungsi</th>
+                            <th>Kelas</th>
                             <th>Harga</th>
                             <th>Total</th>
                         </tr>
@@ -90,9 +91,10 @@
                                 $grandTotal += $total;
                             @endphp
                             <tr>
-                                <td>{{ $item->items->nama ?? '-' }}</td>
+                                <td>{{ $item->items->nama ?? $item->items->judul_buku ?? '-' }}</td>
                                 <td>{{ $item->qty }}</td>
                                 <td>{{ $item->items->fungsi ?? '-' }}</td>
+                                <td>{{ $item->items->kelas ?? '-' }}</td>
                                 <td>Rp {{ number_format($rab, 0, ',', '.') }}</td>
                                 <td>Rp {{ number_format($total, 0, ',', '.') }}</td>
                             </tr>
@@ -105,7 +107,7 @@
                         @endphp
 
                         <tr class="table-light fw-semibold">
-                            <td colspan="4" class="text-end">Sub Total (Setelah Diskon)</td>
+                            <td colspan="5" class="text-end">Sub Total (Setelah Diskon)</td>
                             <td>Rp {{ number_format($grandTotalAfterDiskon, 0, ',', '.') }}</td>
                         </tr>
                     </tbody>

@@ -176,7 +176,7 @@
                 @endphp
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{$item->items->nama}}</td>
+                    <td>{{$item->items->nama ?? $item->items->judul_buku}}</td>
                     <td>{{$item->qty}}</td>
                     <td>{{$item->qty}}</td>
                     <td>{{ number_format($rab, 0, ',', '.') }}</td>

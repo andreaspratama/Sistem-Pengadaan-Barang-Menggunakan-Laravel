@@ -88,6 +88,10 @@
                             <a href="{{route('pengadaan.index')}}" class="submenu-link">Pengajuan Barang</a>
                             
                         </li>
+                        <li class="submenu-item  ">
+                            <a href="{{route('pengadaanBuku')}}" class="submenu-link">Pengajuan Buku</a>
+                            
+                        </li>
                         
                     </ul>
                     

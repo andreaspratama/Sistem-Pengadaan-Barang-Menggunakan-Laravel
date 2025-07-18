@@ -1,0 +1,179 @@
+@extends('layouts.admin')
+
+@section('title')
+    Tambah Pengadaan
+@endsection
+
+@section('content')
+<div class="page-heading mb-4">
+    <h3>Tambah Pengadaan Barang</h3>
+</div>
+<div class="page-content">
+    <section class="section">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0" style="color: white">Form Tambah Pengadaan</h5>
+            </div>
+            <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $item)
+                                <li>{{ $item }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('pengadaan.store') }}" method="POST">
+                    @csrf
+
+                    <div class="mb-3 mt-3">
+                        <label for="unit" class="form-label fw-bold">Unit</label>
+                        <select id="unit" class="form-select" name="unit" required>
+                            <option selected disabled>-- Pilih Unit --</option>
+                            <option value="Manajemen">Manajemen</option>
+                            <option value="Pre School Gajahmada">Pre School Gajahmada</option>
+                            <option value="Pre School Tanah Mas">Pre School Tanah Mas</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="Junior High School">Junior High School</option>
+                            <option value="Senior High School">Senior High School</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="keterangan" class="form-label fw-bold">Keterangan</label>
+                        <input type="text" id="keterangan" class="form-control" name="keterangan" placeholder="Keterangan pengadaan..." required>
+                    </div>
+
+                    <div class="mb-3 mt-3">
+                        <label for="status_rab" class="form-label fw-bold">Status di RAB</label>
+                        <select id="status_rab" class="form-select" name="status_rab" required>
+                            <option selected disabled>-- Pilih Status RAB --</option>
+                            <option value="Ada di RAB">Ada di RAB</option>
+                            <option value="Tidak Ada di RAB">Tidak Ada di RAB</option>
+                        </select>
+                    </div>
+
+                    <div id="item-wrapper">
+                        <div class="item-group card p-3 mb-3 shadow-sm position-relative">
+                            <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Judul Buku</label>
+                                    <input type="text" class="form-control" name="items[0][judul_buku]" placeholder="Judul Buku" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">ISBN</label>
+                                    <input type="text" class="form-control" name="items[0][isbn]" placeholder="ISBN">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Penerbit</label>
+                                    <input type="text" class="form-control" name="items[0][penerbit]" placeholder="Penerbit">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Kelas</label>
+                                    <input type="text" class="form-control" name="items[0][kelas]" placeholder="Kelas" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Jumlah</label>
+                                    <input type="number" class="form-control" name="items[0][jumlah]" placeholder="Jumlah" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">RAB / Item</label>
+                                    <input type="text" class="form-control anggaran-input" name="items[0][rab]" placeholder="Harga">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Kategori</label>
+                                    {{-- <input type="text" class="form-control" name="items[0][kategori_id]" placeholder="Kategori"> --}}
+                                    <select class="form-select" aria-label="Default select example" name="items[0][kategori_id]" class="form-control">
+                                        <option selected>-- Pilih Kategori --</option>
+                                        @foreach ($kategoris as $ktg)
+                                            <option value="{{$ktg->id}}">{{$ktg->nama}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary mb-3" onclick="tambahItem()">+ Tambah Barang</button>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-success">💾 Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+@endsection
+
+@push('prepend-style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css">
+@endpush
+
+@push('addon-script')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    let index = 1;
+
+    function tambahItem() {
+        let html = `
+        <div class="item-group card p-3 mb-3 shadow-sm position-relative">
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="this.parentElement.remove()"></button>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Judul Buku</label>
+                    <input type="text" class="form-control" name="items[${index}][judul_buku]" placeholder="Judul Buku" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">ISBN</label>
+                    <input type="text" class="form-control" name="items[${index}][isbn]" placeholder="ISBN">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Penerbit</label>
+                    <input type="text" class="form-control" name="items[${index}][penerbit]" placeholder="Penerbit">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Kelas</label>
+                    <input type="text" class="form-control" name="items[${index}][kelas]" placeholder="Kelas" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Jumlah</label>
+                    <input type="number" class="form-control" name="items[${index}][jumlah]" placeholder="Jumlah" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">RAB / Item</label>
+                    <input type="text" class="form-control anggaran-input" name="items[${index}][rab]" placeholder="RAB">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Kategori</label>
+                    <select class="form-select" aria-label="Default select example" name="items[${index}][kategori_id]" class="form-control">
+                        <option selected>-- Pilih Kategori --</option>
+                        @foreach ($kategoris as $ktg)
+                            <option value="{{$ktg->id}}">{{$ktg->nama}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>`;
+        $('#item-wrapper').append(html);
+        index++;
+
+        formatAnggaranInputs(); // Apply format ke input baru
+    }
+
+    function formatAnggaranInputs() {
+        $('.anggaran-input').off('input').on('input', function () {
+            let value = this.value.replace(/\D/g, '');
+            this.value = new Intl.NumberFormat('id-ID').format(value);
+        });
+    }
+
+    // Format yang pertama kali muncul
+    $(document).ready(function () {
+        formatAnggaranInputs();
+    });
+</script>
+@endpush
