@@ -47,7 +47,7 @@
                             <option value="">-- Pilih Pengadaan --</option>
                             @foreach($pengadaans as $pengadaan)
                                 <option value="{{ $pengadaan->id }}">
-                                    Pengadaan #{{ $pengadaan->id }} - {{ $pengadaan->keterangan }}
+                                    #{{ $pengadaan->kode }} - {{ $pengadaan->keterangan }}
                                 </option>
                             @endforeach
                         </select>
@@ -66,8 +66,13 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="no_surat" class="form-label">No Surat</label>
-                        <input type="text" name="no_surat" class="form-control">
+                        <label for="unit_id" class="form-label">Pilih Unit</label>
+                        <select id="unit_id" name="unit_id" class="form-select">
+                            <option value="">-- Pilih Unit --</option>
+                            @foreach($units as $unit)
+                                <option value="{{ $unit->id }}">{{ $unit->nama }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-6">
                         <label for="tanggal" class="form-label">Tanggal</label>
@@ -75,7 +80,44 @@
                     </div>
                 </div>
 
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nama_pemesan" class="form-label">Nama Pemesan</label>
+                        <input type="text" name="nama_pemesan" id="nama_pemesan" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="alamat_pemesan" class="form-label">Alamat Pemesan</label>
+                        <input type="text" name="alamat_pemesan" id="alamat_pemesan" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="no_telp" class="form-label">No Telp</label>
+                        <input type="text" name="no_telp" id="no_telp" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="text" name="email" id="email" class="form-control" readonly>
+                    </div>
+                </div>
+
                 <div class="mb-3">
+                    <label for="contact_person" class="form-label">Contact Person</label>
+                    <input type="text" name="contact_person" id="contact_person" class="form-control" readonly>
+                </div>
+
+                {{-- <div class="mb-3" id="unit-info" style="display: none;">
+                    <div class="alert alert-info">
+                        <strong>📌 Info Unit:</strong>
+                        <ul class="mb-0 mt-2" id="unit-info-list">
+                            <!-- Info unit akan dimuat di sini -->
+                        </ul>
+                    </div>
+                </div> --}}
+
+
+                {{-- <div class="mb-3">
                     <label for="nama_pemesan" class="form-label">Nama Pemesan</label>
                     <input type="text" name="nama_pemesan" class="form-control">
                 </div>
@@ -110,7 +152,7 @@
                 <div class="mb-3">
                     <label for="ppn" class="form-label">PPN</label>
                     <input type="text" name="ppn" class="form-control">
-                </div>
+                </div> --}}
 
                 <div class="mb-3">
                     <label for="catatan" class="form-label">Catatan</label>
@@ -261,6 +303,27 @@
         textarea.addEventListener('focus', function () {
             if (textarea.value.trim() === '') {
                 textarea.value = '1. ';
+            }
+        });
+    </script>
+    <script>
+        document.getElementById('unit_id').addEventListener('change', function () {
+            const unitId = this.value;
+
+            if (unitId) {
+                fetch(`/admin/unit/${unitId}`)
+                    .then(response => response.json())
+                    .then(unit => {
+                        document.getElementById('nama_pemesan').value = unit.nama ?? '';
+                        document.getElementById('alamat_pemesan').value = unit.alamat ?? '';
+                        document.getElementById('no_telp').value = unit.no_tlp ?? '';
+                        document.getElementById('email').value = unit.email ?? '';
+                        document.getElementById('contact_person').value = unit.cp ?? '';
+                    })
+                    .catch(error => {
+                        alert('Gagal mengambil data unit');
+                        console.error(error);
+                    });
             }
         });
     </script>

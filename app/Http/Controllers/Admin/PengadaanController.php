@@ -11,6 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class PengadaanController extends Controller
 {
@@ -98,35 +99,49 @@ class PengadaanController extends Controller
             'keterangan' => 'nullable|string',
         ]);
     
-        // Simpan pengadaan utama
-        $pengadaan = Pengadaan::create([
-            'user_id' => auth()->id(),
-            'tanggal_pengajuan' => now(),
-            'status' => 'pending', // default status awal
-            'keterangan' => $request->keterangan,
-            'status_rab' => $request->status_rab,
-            'unit' => $request->unit,
-        ]);
-    
-        // Simpan item-itemnya
-        foreach ($request->items as $item) {
-            $pengadaan->items()->create([
-                'nama' => $item['nama'] ?? null,
-                'fungsi' => $item['fungsi'] ?? null,
-                'ukuran' => $item['ukuran'] ?? null,
-                'type' => $item['type'] ?? null,
-                'jumlah' => $item['jumlah'] ?? null,
-                'rab' => $item['rab'] ?? null,
-                'merk' => $item['merk'] ?? null,
-                'judul_buku' => $item['judul_buku'] ?? null,
-                'isbn' => $item['isbn'] ?? null,
-                'penerbit' => $item['penerbit'] ?? null,
-                'kelas' => $item['kelas'] ?? null,
-                'kategori_id' => $item['kategori_id'],
+        DB::beginTransaction();
+
+        try {
+            // Simpan pengadaan utama dulu
+            $pengadaan = Pengadaan::create([
+                'user_id'           => auth()->id(),
+                'tanggal_pengajuan' => now(),
+                'status'            => 'pending',
+                'keterangan'        => $request->keterangan,
+                'status_rab'        => $request->status_rab,
+                'unit'              => $request->unit,
             ]);
+
+            // Generate kode setelah dapet ID unik
+            $kode_pengadaan = 'PGD-' . str_pad($pengadaan->id, 6, '0', STR_PAD_LEFT);
+            $pengadaan->update(['kode' => $kode_pengadaan]);
+
+            // Simpan item-item pengadaan
+            foreach ($request->items as $item) {
+                $pengadaan->items()->create([
+                    'nama'         => $item['nama'] ?? null,
+                    'fungsi'       => $item['fungsi'] ?? null,
+                    'ukuran'       => $item['ukuran'] ?? null,
+                    'type'         => $item['type'] ?? null,
+                    'jumlah'       => $item['jumlah'] ?? null,
+                    'rab'          => $item['rab'] ?? null,
+                    'merk'         => $item['merk'] ?? null,
+                    'judul_buku'   => $item['judul_buku'] ?? null,
+                    'isbn'         => $item['isbn'] ?? null,
+                    'penerbit'     => $item['penerbit'] ?? null,
+                    'kelas'        => $item['kelas'] ?? null,
+                    'kategori_id'  => $item['kategori_id'],
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->route('pengadaan.index')->with('success', 'Pengadaan barang berhasil disimpan');
+        
+        } catch (\Exception $e) {
+            DB::rollBack();
+            logger()->error('Gagal menyimpan pengadaan', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal menyimpan pengadaan: ' . $e->getMessage());
         }
-    
-        return redirect()->route('pengadaan.index')->with('success', 'Pengadaan barang berhasil disimpan');
     }
 
     /**

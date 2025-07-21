@@ -107,7 +107,7 @@
                         @endphp
 
                         <tr class="table-light fw-semibold">
-                            <td colspan="5" class="text-end">Sub Total (Setelah Diskon)</td>
+                            <td colspan="5" class="text-end">Sub Total</td>
                             <td>Rp {{ number_format($grandTotalAfterDiskon, 0, ',', '.') }}</td>
                         </tr>
                     </tbody>

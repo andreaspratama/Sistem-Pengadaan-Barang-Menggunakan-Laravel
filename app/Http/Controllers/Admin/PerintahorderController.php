@@ -6,6 +6,8 @@ use Pdf;
 use App\Models\Vendor;
 use App\Models\Kategori;
 use App\Models\Pengadaan;
+use App\Models\ApprovalLog;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use App\Models\PengadaanItem;
 use App\Models\Perintahorder;
@@ -52,9 +54,13 @@ class PerintahorderController extends Controller
      */
     public function create()
     {
-        $pengadaans = Pengadaan::where('status', 'finish_procurement')->get();
+        $usedPengadaanIds = Perintahorder::pluck('pengadaan_id');
+        $pengadaans = Pengadaan::whereNotIn('id', $usedPengadaanIds)
+                        ->where('status', 'finish_procurement')
+                        ->get();
+        $units = Unit::all();
 
-        return view('pages.admin.perintahorder.create', compact('pengadaans'));
+        return view('pages.admin.perintahorder.create', compact('pengadaans', 'units'));
     }
 
     public function getVendorsByPengadaan($pengadaanId)
@@ -98,10 +104,17 @@ class PerintahorderController extends Controller
     
     public function store(Request $request)
     {
+        // Ambil nomor terakhir
+        $lastOrder = Perintahorder::latest('id')->first();
+        $nextNumber = $lastOrder ? $lastOrder->id + 1 : 1;
+
+        // Format nomor surat (misal: STR/001)
+        $noSurat = 'STR/' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
         $request->validate([
             'pengadaan_id' => 'required|exists:pengadaans,id',
             'vendor_id' => 'required|exists:vendors,id',
-            'no_surat' => 'required|string',
+            'unit_id' => 'required|exists:units,id',
             'nama_pemesan' => 'required|string',
             'alamat_pemesan' => 'required|string',
             'no_telp' => 'required|string',
@@ -117,7 +130,8 @@ class PerintahorderController extends Controller
             $perintahOrder = Perintahorder::create([
                 'pengadaan_id'    => $request->pengadaan_id,
                 'vendor_id'       => $request->vendor_id,
-                'no_surat'        => $request->no_surat,
+                'unit_id'         => $request->unit_id,
+                'no_surat'        => $noSurat,
                 'tanggal'         => $request->tanggal,
                 'nama_pemesan'    => $request->nama_pemesan,
                 'alamat_pemesan'  => $request->alamat_pemesan,
@@ -166,7 +180,12 @@ class PerintahorderController extends Controller
      */
     public function edit(string $id)
     {
-        return 'Halaman Edit';
+        $pengadaan = Pengadaan::all();
+        $po = Perintahorder::with(['pengadaan', 'vendor'])->findOrFail($id);
+        $items = PerintahorderItem::with('items')->where('perintahorder_id', $po->id)->get();
+        $units = Unit::all();
+
+        return view('pages.admin.perintahorder.edit', compact('po', 'pengadaan', 'items', 'units'));
     }
 
     /**
@@ -174,7 +193,50 @@ class PerintahorderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'unit_id' => 'required|exists:units,id',
+            'tanggal' => 'required|date',
+            'nama_pemesan' => 'required|string|max:255',
+            'alamat_pemesan' => 'required|string|max:255',
+            'no_telp' => 'required|string|max:50',
+            'email' => 'required|email|max:255',
+            'contact_person' => 'required|string|max:255',
+            'catatan' => 'nullable|string',
+            'data' => 'required|array|min:1',
+            'data.*.pengadaan_item_id' => 'required|exists:pengadaan_items,id',
+            'data.*.qty' => 'required|numeric|min:1',
+            'data.*.rab' => 'required|numeric|min:0',
+        ]);
+
+        $po = Perintahorder::findOrFail($id);
+
+        // Update data PO
+        $po->update([
+            'pengadaan_id' => $request->pengadaan_id,
+            'vendor_id' => $request->vendor_id,
+            'unit_id' => $request->unit_id,
+            'tanggal' => $request->tanggal,
+            'nama_pemesan' => $request->nama_pemesan,
+            'alamat_pemesan' => $request->alamat_pemesan,
+            'no_telp' => $request->no_telp,
+            'email' => $request->email,
+            'contact_person' => $request->contact_person,
+            'catatan' => $request->catatan,
+        ]);
+
+        // Hapus item lama dan ganti dengan yang baru
+        PerintahorderItem::where('perintahorder_id', $po->id)->delete();
+
+        foreach ($request->data as $item) {
+            PerintahorderItem::create([
+                'perintahorder_id' => $po->id,
+                'pengadaan_item_id' => $item['pengadaan_item_id'],
+                'qty' => $item['qty'],
+                'rab' => (float) str_replace('.', '', $item['rab']),
+            ]);
+        }
+
+        return redirect()->route('perintahorder.index')->with('success', 'Perintah Order berhasil diperbarui!');
     }
 
     /**
@@ -188,6 +250,9 @@ class PerintahorderController extends Controller
     public function generatePDF($id)
     {
         $po = Perintahorder::with(['poitem'])->findOrFail($id);
+        $approvalLogs = ApprovalLog::where('pengadaan_id', $po->pengadaan_id)
+                        ->orderBy('tanggal_approval')
+                        ->get();
 
         // Hitung total & diskon
         // $grandTotal = 0;
@@ -199,7 +264,7 @@ class PerintahorderController extends Controller
         // $nilaiDiskon = $grandTotal * ($diskonPersen / 100);
         // $grandTotalAfterDiskon = $grandTotal - $nilaiDiskon;
 
-        $pdf = PDF::loadView('pages.admin.perintahorder.generatePdf', compact('po'))
+        $pdf = PDF::loadView('pages.admin.perintahorder.generatePdf', compact('po', 'approvalLogs'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream();

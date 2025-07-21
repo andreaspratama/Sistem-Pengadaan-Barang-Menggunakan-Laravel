@@ -219,32 +219,55 @@
             Tanggal: <span>{{ \Carbon\Carbon::parse($po->tanggal)->locale('id')->translatedFormat('d F Y') }}</span>
         </div>
 
-        <div style="margin-bottom: 60px;">
-            <div style="display: inline-block; width: 33%;">
-                <strong>Disetujui</strong> Oleh :
-            </div>
-            <div style="display: inline-block; width: 33%;">
-                <strong>Mengetahui</strong> Oleh:
-            </div>
-            <div style="display: inline-block; width: 33%;">
-                <strong>Diajukan</strong> Oleh :
-            </div>
-        </div>
+        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+            <tr>
+                <!-- Kolom kiri: Tabel Approval (tetap ada border) -->
+                <td style="width: 60%; vertical-align: top;">
+                    <strong>Riwayat Persetujuan:</strong>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #000;">No</th>
+                                <th style="border: 1px solid #000;">Role</th>
+                                <th style="border: 1px solid #000;">Status</th>
+                                <th style="border: 1px solid #000;">Tanggal</th>
+                                <th style="border: 1px solid #000;">Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($approvalLogs as $i => $log)
+                                @php
+                                    $catatan = null;
+                                    if ($log->role === 'Finance') {
+                                        $catatan = $po->pengadaan->items->first()->catatan_finance ?? '-';
+                                    } elseif ($log->role === 'Direktur') {
+                                        $catatan = $po->pengadaan->items->first()->catatan_direktur ?? '-';
+                                    }
+                                @endphp
+                                <tr>
+                                    <td style="border: 1px solid #000; text-align: center;">{{ $i + 1 }}</td>
+                                    <td style="border: 1px solid #000;">{{ $log->role }}</td>
+                                    <td style="border: 1px solid #000;">{{ $log->status }}</td>
+                                    <td style="border: 1px solid #000;">
+                                        {{ \Carbon\Carbon::parse($log->tanggal_approval)->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td style="border: 1px solid #000;">{{ $catatan ?? '-' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </td>
 
-        <div>
-            <div style="display: inline-block; width: 33%;">
-                Nama : Sarah <span style="text-decoration: underline;">Suryawati</span>, SH, MBA<br>
-                <strong>Jabatan</strong> : Direktur
-            </div>
-            <div style="display: inline-block; width: 33%;">
-                Nama : Ratnawati, SE<br>
-                <strong>Jabatan</strong> : PJS Kabid Keuangan
-            </div>
-            <div style="display: inline-block; width: 33%;">
-                Nama : Rita Tirza<br>
-                <strong>Jabatan</strong> : Kabid Pengadaan
-            </div>
-        </div>
+                <!-- Kolom kanan: Tanda Tangan tanpa border -->
+                <td style="width: 40%; vertical-align: top; text-align: center; border: none;">
+                    <div style="margin-bottom: 60px;"><strong>Disetujui Oleh:</strong></div>
+                    <br><br>
+                    <span>Sarah Suryawati</span>, SH, MBA<br>
+                    <strong>Jabatan</strong> : Direktur
+                </td>
+            </tr>
+        </table>
+
     </div>
 
 

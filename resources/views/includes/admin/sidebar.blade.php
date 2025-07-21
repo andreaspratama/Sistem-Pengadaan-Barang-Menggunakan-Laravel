@@ -53,6 +53,9 @@
                             
                             @if (in_array(Auth::user()->role, ['Admin', 'Procurement', 'Staff Procurement']))
                                 <li class="submenu-item  ">
+                                    <a href="{{route('unit.index')}}" class="submenu-link">Unit</a>
+                                </li>
+                                <li class="submenu-item  ">
                                     <a href="{{route('vendor.index')}}" class="submenu-link">Vendor</a>
                                 </li>
                                 <li class="submenu-item  ">

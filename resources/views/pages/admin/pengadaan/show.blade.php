@@ -42,10 +42,10 @@
                     @if ($pengadaan->status === 'distributed' && !in_array(Auth::user()->role, $roleTerlarang))
                         <form action="{{ route('pengadaan.updateStatusWithNote', [$pengadaan->id, 'accepted']) }}" method="POST" class="mt-3">
                             @csrf
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="komentar">Catatan (opsional)</label>
                                 <textarea name="komentar" id="komentar" class="form-control" placeholder="Contoh: Mouse belum dikirim"></textarea>
-                            </div>
+                            </div> --}}
                             <button class="btn btn-warning mt-2">Accepted</button>
                         </form>
                     @endif

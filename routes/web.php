@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\TaController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VendorController;
@@ -27,6 +28,9 @@ Route::prefix('admin')
     ->group(function(){
         Route::group(['middleware' => ['auth']], function() {
             Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+            // UNIT
+            Route::resource('unit', UnitController::class);
 
             // TAHUN AJARAN
             Route::resource('ta', TaController::class);

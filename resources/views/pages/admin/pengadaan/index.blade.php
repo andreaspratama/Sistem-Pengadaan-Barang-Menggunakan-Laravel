@@ -61,6 +61,7 @@
                   <thead>
                     <tr>
                         <th>No</th>
+                        <th>Kode Pengadaan</th>
                         <th>Mengajukan</th>
                         <th>Unit</th>
                         <th>Nama</th>
@@ -130,6 +131,7 @@
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                    { data: 'kode', name: 'user.kode' },
                     { data: 'user_info', name: 'user.name' },
                     { data: 'unit_label', name: 'unit' },
                     { data: 'keterangan', name: 'keterangan' },

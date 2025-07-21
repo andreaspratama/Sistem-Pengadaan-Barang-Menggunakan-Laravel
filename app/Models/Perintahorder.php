@@ -24,4 +24,9 @@ class Perintahorder extends Model
     {
         return $this->hasMany(PerintahorderItem::class);
     }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
 }
