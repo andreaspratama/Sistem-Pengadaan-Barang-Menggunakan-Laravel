@@ -241,6 +241,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Status RAB</th>
+                                <th>COA</th>
                                 <th>Barang</th>
                                 <th>Buku</th>
                                 <th>Fungsi</th>
@@ -251,6 +252,7 @@
                                 <th>Penerbit</th>
                                 <th>RAB / Item</th>
                                 <th>Total</th>
+                                <th>Catatan Kepsek</th>
                                 <th>Validasi Finance</th>
                                 <th>Validasi Director</th>
                             </tr>
@@ -275,6 +277,7 @@
                                             <span class="badge text-bg-success">{{ $pengadaan->status_rab }}</span>
                                         @endif
                                     </td>
+                                    <td>{{ $item->coa }}</td>
                                     <td>{{ $item->nama }}</td>
                                     <td>{{ $item->judul_buku }}</td>
                                     <td>{{ $item->fungsi }}</td>
@@ -285,6 +288,21 @@
                                     <td>{{ $item->penerbit }}</td>
                                     <td>Rp {{ number_format(preg_replace('/\D/', '', $item->rab), 0, ',', '.') }}</td>
                                     <td>Rp {{ number_format($total, 0, ',', '.') }}</td>
+                                    <td>
+                                        @if (Auth::user()->role === 'Kepala Sekolah')
+                                            @if (empty($item->catatan_kepsek))
+                                                <form action="{{ route('catatanKepsek', $item->id) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <input type="text" name="catatan_kepsek" placeholder="Catatan..." class="form-control form-control-sm mb-1" required>
+                                                    <button class="btn btn-success btn-sm mb-3">Send</button>
+                                                </form>
+                                            @else
+                                                <small><strong>Catatan:</strong> {{ $item->catatan_kepsek }}</small>
+                                            @endif
+                                        @else
+                                            <small><strong>Catatan:</strong> {{ $item->catatan_kepsek }}</small>
+                                        @endif
+                                    </td>
                                     <td>
                                         @if($item->status_finance === 'pending')
                                             @if (in_array(Auth::user()->role, ['Finance', 'Checker']))
@@ -396,7 +414,7 @@
                         <tfoot>
                             {{-- Baris subtotal --}}
                             <tr>
-                                <td colspan="11" style="text-align: right; font-weight: bold;">Sub Total</td>
+                                <td colspan="12" style="text-align: right; font-weight: bold;">Sub Total</td>
                                 <td style="font-weight: bold;">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>

@@ -3,8 +3,8 @@
         <span class="badge bg-warning">Pending</span>
     @elseif($pengadaan->status === 'validated_kepsek')
         <span class="badge bg-info">Validated Kepala Sekolah</span>
-    @elseif($pengadaan->status === 'validated_finance')
-        <span class="badge bg-warning">Verified Finance</span>
+    @elseif($pengadaan->status === 'verified_finance')
+        <span class="badge bg-success">Verified Finance</span>
     @elseif($pengadaan->status === 'rejected_finance')
         <span class="badge bg-danger">Rejected Finance</span>
     @elseif($pengadaan->status === 'approved_director')

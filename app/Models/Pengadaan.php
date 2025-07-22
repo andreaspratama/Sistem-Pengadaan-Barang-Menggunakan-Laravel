@@ -40,4 +40,9 @@ class Pengadaan extends Model
     {
         return $this->hasMany(Perintahorder::class);
     }
+
+    public function checker()
+    {
+        return $this->belongsTo(User::class, 'checked');
+    }
 }

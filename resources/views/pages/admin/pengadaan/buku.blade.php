@@ -61,6 +61,7 @@
                   <thead>
                     <tr>
                         <th>No</th>
+                        <th>Kode Pengadaan</th>
                         <th>Mengajukan</th>
                         <th>Unit</th>
                         <th>Nama</th>
@@ -119,7 +120,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '{{ route("pengadaan.data") }}',
+                    url: '{{ route("pengadaanBuku.data") }}',
                     data: function (d) {
                         d.status = $('#filter-status').val();
                         d.unit = $('#filter-unit').val();
@@ -129,6 +130,7 @@
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                    { data: 'kode', name: 'kode' },
                     { data: 'user_info', name: 'user.name' },
                     { data: 'unit_label', name: 'unit' },
                     { data: 'keterangan', name: 'keterangan' },

@@ -32,6 +32,11 @@ class PengadaanController extends Controller
 
             $query = Pengadaan::query();
 
+            // KECUALI kategori_id 12
+            $query->whereHas('items', function ($q) {
+                $q->where('kategori_id', '!=', 12);
+            });
+
             if ($request->status) {
                 $query->where('status', $request->status);
             }
@@ -119,6 +124,7 @@ class PengadaanController extends Controller
             // Simpan item-item pengadaan
             foreach ($request->items as $item) {
                 $pengadaan->items()->create([
+                    'coa'         => $item['coa'] ?? null,
                     'nama'         => $item['nama'] ?? null,
                     'fungsi'       => $item['fungsi'] ?? null,
                     'ukuran'       => $item['ukuran'] ?? null,
@@ -407,6 +413,18 @@ class PengadaanController extends Controller
         return back()->with('success', 'Status updated successfully.');
     }
 
+    // CATATAN KEPSEK
+    public function catatanKepsek(Request $request, $id)
+    {
+        $item = PengadaanItem::findOrFail($id);
+        $item->update([
+            'catatan_kepsek' => $request->catatan_kepsek
+        ]);
+
+        $this->checkFinanceStatus($item->pengadaan_id); // ✅ pakai pengadaan_id!
+
+        return back()->with('success', 'Berhasil menambahkan catatan.');
+    }
 
     // VALIDATED BY FINANCE / ITEM
     public function approve(Request $request, $id)
@@ -414,6 +432,8 @@ class PengadaanController extends Controller
         $item = PengadaanItem::findOrFail($id);
         $item->update([
             'status_finance' => 'checked',
+            'checked' => Auth::id(),
+            'tgl_checked' => now(),
             'catatan_finance' => $request->catatan
         ]);
 
@@ -492,6 +512,67 @@ class PengadaanController extends Controller
     {
         return view('pages.admin.pengadaan.buku');
     }
+
+    public function getDataBuku(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            $query = Pengadaan::query();
+
+            // Filter: hanya ambil pengadaan yang punya item dengan kategori_id = 12
+            $query->whereHas('items', function ($q) {
+                $q->where('kategori_id', 12);
+            });
+
+            if ($request->status) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->unit) {
+                $query->where('unit', $request->unit);
+            }
+
+            if ($request->date_start && $request->date_end) {
+                $query->whereBetween('tanggal_pengajuan', [$request->date_start, $request->date_end]);
+            }
+
+            if ($user->unit) {
+                $query->where('unit', $user->unit);
+            }
+
+            $pengadaans = $query
+                ->orderBy('id', 'desc')
+                ->get();
+
+            return DataTables::of($pengadaans)
+                ->addIndexColumn()
+                ->addColumn('user_info', function ($row) {
+                    return optional($row->user)->name . ' (' . optional($row->user)->role . ')';
+                })
+                ->addColumn('unit_label', function ($row) {
+                    return view('pages.admin.pengadaan._unit', compact('row'))->render();
+                })
+                ->addColumn('keterangan', fn($row) => $row->keterangan)
+                ->addColumn('tanggal_pengajuan', fn($row) => \Carbon\Carbon::parse($row->tanggal_pengajuan)->format('d-m-Y'))
+                ->addColumn('status_label', function ($row) {
+                    return view('pages.admin.pengadaan._status', compact('row'))->render();
+                })
+                ->addColumn('status_label_rab', function ($row) {
+                    return view('pages.admin.pengadaan._statusRab', compact('row'))->render();
+                })
+                ->addColumn('action', function ($row) {
+                    return view('pages.admin.pengadaan._action', compact('row'))->render();
+                })
+                ->rawColumns(['status_label', 'status_label_rab', 'action', 'unit_label'])
+                ->make(true);
+
+        } catch (\Exception $e) {
+            \Log::error('getData error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
 
     public function tambahBuku()
     {

@@ -64,6 +64,10 @@
                                     <input type="text" class="form-control" name="items[0][nama]" placeholder="Nama Barang" required>
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label fw-bold">COA</label>
+                                    <input type="text" class="form-control" name="items[0][coa]" placeholder="COA" required>
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label fw-bold">Type</label>
                                     <input type="text" class="form-control" name="items[0][type]" placeholder="Type">
                                 </div>
@@ -130,6 +134,10 @@
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Nama Barang</label>
                     <input type="text" class="form-control" name="items[${index}][nama]" placeholder="Nama Barang" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">COA</label>
+                    <input type="text" class="form-control" name="items[${index}][coa]" placeholder="COA" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Type</label>

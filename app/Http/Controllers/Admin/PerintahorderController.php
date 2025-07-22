@@ -104,12 +104,25 @@ class PerintahorderController extends Controller
     
     public function store(Request $request)
     {
-        // Ambil nomor terakhir
-        $lastOrder = Perintahorder::latest('id')->first();
-        $nextNumber = $lastOrder ? $lastOrder->id + 1 : 1;
+        $now = \Carbon\Carbon::now();
+        $year = $now->year;
+        $month = $now->month;
 
-        // Format nomor surat (misal: STR/001)
-        $noSurat = 'STR/' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        // Format bulan romawi
+        $bulanRomawi = [
+            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV',
+            5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII',
+            9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
+        ];
+
+        // Hitung total data yg sudah ada
+        $totalData = Perintahorder::count();
+        $nextNumber = $totalData + 1;
+
+        // Format: 00001/SPO.UM/Pengadaan/VII/2025
+        $noSurat = str_pad($nextNumber, 5, '0', STR_PAD_LEFT)
+            . '/SPO.UM/Pengadaan/' . $bulanRomawi[$month] . '/' . $year;
+
 
         $request->validate([
             'pengadaan_id' => 'required|exists:pengadaans,id',
@@ -249,7 +262,7 @@ class PerintahorderController extends Controller
 
     public function generatePDF($id)
     {
-        $po = Perintahorder::with(['poitem'])->findOrFail($id);
+        $po = Perintahorder::with(['poitem', 'pengadaan.checker'])->findOrFail($id);
         $approvalLogs = ApprovalLog::where('pengadaan_id', $po->pengadaan_id)
                         ->orderBy('tanggal_approval')
                         ->get();

@@ -53,6 +53,9 @@ Route::prefix('admin')
             Route::get('pengadaan/{id}/approvalFinance', [PengadaanController::class, 'approvalFinance'])->name('approvalFinance');
             Route::post('pengadaan/{id}/approvalFinanceProses', [PengadaanController::class, 'approvalFinanceProses'])->name('approvalFinanceProses');
 
+            // CATATAN KEPSEK
+            Route::post('/pengadaan/catatanKepsek/{id}', [PengadaanController::class, 'catatanKepsek'])->name('catatanKepsek');
+
             // APROVAL FINANCE / ITEM
             Route::post('/pengadaan/approve/{id}', [PengadaanController::class, 'approve'])->name('pengadaan.approve');
             Route::post('/pengadaan/reject/{id}', [PengadaanController::class, 'reject'])->name('pengadaan.reject');
@@ -70,6 +73,7 @@ Route::prefix('admin')
             Route::post('pengadaan/{id}/approvalProcurementProses', [PengadaanController::class, 'approvalProcurementProses'])->name('approvalProcurementProses');
 
             // PENGADAAN
+            Route::get('pengadaanBuku/data', [PengadaanController::class, 'getDataBuku'])->name('pengadaanBuku.data');
             Route::get('pengadaan/data', [PengadaanController::class, 'getData'])->name('pengadaan.data');
             Route::get('tambahBuku', [PengadaanController::class, 'tambahBuku'])->name('tambahBuku');
             Route::get('pengadaanBuku', [PengadaanController::class, 'pengadaanBuku'])->name('pengadaanBuku');
