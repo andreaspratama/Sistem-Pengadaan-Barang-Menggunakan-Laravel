@@ -64,6 +64,10 @@
                                     <input type="text" class="form-control" name="items[0][judul_buku]" placeholder="Judul Buku" required>
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label fw-bold">COA</label>
+                                    <input type="text" class="form-control" name="items[0][coa]" placeholder="COA" required>
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label fw-bold">ISBN</label>
                                     <input type="text" class="form-control" name="items[0][isbn]" placeholder="ISBN">
                                 </div>
@@ -126,6 +130,10 @@
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Judul Buku</label>
                     <input type="text" class="form-control" name="items[${index}][judul_buku]" placeholder="Judul Buku" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">COA</label>
+                    <input type="text" class="form-control" name="items[${index}][coa]" placeholder="COA" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold">ISBN</label>

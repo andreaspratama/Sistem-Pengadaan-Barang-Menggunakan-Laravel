@@ -583,7 +583,11 @@ class PengadaanController extends Controller
 
     public function generatePdfBarang($id)
     {
-        $pengadaan = Pengadaan::with('items')->findOrFail($id);
+        $pengadaan = Pengadaan::with('items', 'checker')->findOrFail($id);
+        $approvalLogs = ApprovalLog::where('pengadaan_id', $pengadaan->id)
+                        ->orderBy('tanggal_approval')
+                        ->get();
+
 
         // Hitung total & diskon
         // $grandTotal = 0;
@@ -595,7 +599,7 @@ class PengadaanController extends Controller
         // $nilaiDiskon = $grandTotal * ($diskonPersen / 100);
         // $grandTotalAfterDiskon = $grandTotal - $nilaiDiskon;
 
-        $pdf = PDF::loadView('pages.admin.pengadaan.generatePdfBarang', compact('pengadaan'))
+        $pdf = PDF::loadView('pages.admin.pengadaan.generatePdfBarang', compact('pengadaan', 'approvalLogs'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream();

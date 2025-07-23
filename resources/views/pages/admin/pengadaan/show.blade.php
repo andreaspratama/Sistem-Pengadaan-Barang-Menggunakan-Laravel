@@ -289,15 +289,17 @@
                                     <td>Rp {{ number_format(preg_replace('/\D/', '', $item->rab), 0, ',', '.') }}</td>
                                     <td>Rp {{ number_format($total, 0, ',', '.') }}</td>
                                     <td>
-                                        @if (Auth::user()->role === 'Kepala Sekolah')
-                                            @if (empty($item->catatan_kepsek))
-                                                <form action="{{ route('catatanKepsek', $item->id) }}" method="POST" style="display:inline;">
-                                                    @csrf
-                                                    <input type="text" name="catatan_kepsek" placeholder="Catatan..." class="form-control form-control-sm mb-1" required>
-                                                    <button class="btn btn-success btn-sm mb-3">Send</button>
-                                                </form>
-                                            @else
-                                                <small><strong>Catatan:</strong> {{ $item->catatan_kepsek }}</small>
+                                        @if ($pengadaan->status === 'pending')
+                                            @if (Auth::user()->role === 'Kepala Sekolah')
+                                                @if (empty($item->catatan_kepsek))
+                                                    <form action="{{ route('catatanKepsek', $item->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <input type="text" name="catatan_kepsek" placeholder="Catatan..." class="form-control form-control-sm mb-1" required>
+                                                        <button class="btn btn-success btn-sm mb-3">Send</button>
+                                                    </form>
+                                                @else
+                                                    <small><strong>Catatan:</strong> {{ $item->catatan_kepsek }}</small>
+                                                @endif
                                             @endif
                                         @else
                                             <small><strong>Catatan:</strong> {{ $item->catatan_kepsek }}</small>

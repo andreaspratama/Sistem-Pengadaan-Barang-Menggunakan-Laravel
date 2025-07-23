@@ -141,5 +141,87 @@
         </tbody>
     </table>
 
+    <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+            <tr>
+                <!-- Kolom kiri: Tabel Approval (tetap ada border) -->
+                <td style="width: 100%; vertical-align: top;">
+                    <strong>Riwayat Persetujuan:</strong>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #000;">No</th>
+                                <th style="border: 1px solid #000;">Nama</th>
+                                <th style="border: 1px solid #000;">Peran</th>
+                                <th style="border: 1px solid #000;">Status</th>
+                                <th style="border: 1px solid #000;">Tanggal</th>
+                                <th style="border: 1px solid #000;">Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{-- 1. Dibuat oleh --}}
+                            <tr>
+                                <td style="border: 1px solid #000; text-align: center;">1</td>
+                                <td style="border: 1px solid #000;">{{ $pengadaan->user->name ?? '-' }}</td>
+                                <td style="border: 1px solid #000;">Pembuat</td>
+                                <td style="border: 1px solid #000;">Dibuat</td>
+                                <td style="border: 1px solid #000;">
+                                    {{ \Carbon\Carbon::parse($pengadaan->created_at)->format('d/m/Y') }}
+                                </td>
+                                <td style="border: 1px solid #000;">-</td>
+                            </tr>
+
+                            {{-- 2. Checker --}}
+                            @php $no = 2; @endphp
+                            @foreach ($pengadaan->items as $item)
+                                @php
+                                    $checker = \App\Models\User::find($item->checked);
+                                @endphp
+
+                                @if ($checker)
+                                    <tr>
+                                        <td style="border: 1px solid #000; text-align: center;">{{ $no++ }}</td>
+                                        <td style="border: 1px solid #000;">{{ $checker->name }}</td>
+                                        <td style="border: 1px solid #000;">Checker</td>
+                                        <td style="border: 1px solid #000;">Dicek</td>
+                                        <td style="border: 1px solid #000;">
+                                            {{ \Carbon\Carbon::parse($item->tanggal_checked)->format('d/m/Y') }}
+                                        </td>
+                                        <td style="border: 1px solid #000;">{{ $item->catatan_finance ?? '-' }}</td>
+                                    </tr>
+                                @endif
+                            @endforeach
+
+                            {{-- 3. Approval logs --}}
+                            @foreach ($approvalLogs as $i => $log)
+                                @php
+                                    $catatan = '-';
+
+                                    // Ambil item pertama (jika ada)
+                                    $firstItem = $pengadaan->items->first();
+
+                                    if ($log->role === 'Direktur') {
+                                        $catatan = $firstItem->catatan_direktur ?? '-';
+                                    } elseif ($log->role === 'Kepala Sekolah') {
+                                        $catatan = $firstItem->catatan_kepsek ?? '-';
+                                    }
+                                @endphp
+                                <tr>
+                                    <td style="border: 1px solid #000; text-align: center;">{{ $i + $no }}</td>
+                                    <td style="border: 1px solid #000;">{{ $log->user->name ?? '-' }}</td>
+                                    <td style="border: 1px solid #000;">{{ $log->role }}</td>
+                                    <td style="border: 1px solid #000;">{{ $log->status }}</td>
+                                    <td style="border: 1px solid #000;">
+                                        {{ \Carbon\Carbon::parse($log->tanggal_approval)->format('d/m/Y') }}
+                                    </td>
+                                    <td style="border: 1px solid #000;">{{ $catatan }}</td>
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
 </body>
 </html>
