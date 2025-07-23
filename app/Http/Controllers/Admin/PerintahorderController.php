@@ -95,7 +95,7 @@ class PerintahorderController extends Controller
                             'catatan_finance' => $item->catatan_finance,
                             'catatan_direktur' => $item->catatan_direktur,
                             'status_finance' => $item->status_finance,
-                            'status_director' => $item->status_director,
+                            'status_direktur' => $item->status_direktur,
                         ];
                     });
 

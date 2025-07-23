@@ -215,10 +215,17 @@
             fetch(`/admin/perintahorders/barang/${pengadaanId}/${vendorId}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Filter: exclude kalau status_finance atau status_director adalah "rejected"
-                    const filteredData = data.filter(item => 
-                        item.status_finance === 'checked' || item.status_director === 'approved'
-                    );
+                    // CEK KONDISI
+                    console.log('DATA DARI SERVER:', data);
+                    const filteredData = data.filter(item => {
+                        const statusFinance = (item.status_finance || '').toLowerCase();
+                        const statusDirektur = (item.status_direktur || '').toLowerCase(); // ✅ GANTI DI SINI
+
+                        const isCheckedByFinance = statusFinance === 'checked';
+                        const isRejectedByFinanceAndApprovedByDirektur = statusFinance === 'rejected' && statusDirektur === 'approved'; // ✅ GANTI DI SINI
+
+                        return isCheckedByFinance || isRejectedByFinanceAndApprovedByDirektur;
+                    });
 
                     if (filteredData.length > 0) {
                         let html = '<h5>Daftar Barang</h5>';

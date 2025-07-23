@@ -584,11 +584,30 @@ class PengadaanController extends Controller
     public function generatePdfBarang($id)
     {
         $pengadaan = Pengadaan::with('items', 'checker')->findOrFail($id);
+
+        // Filter hanya item yang sesuai dengan aturan:
+        $filteredItems = $pengadaan->items->filter(function ($item) {
+            return $item->status_finance === 'checked' || 
+                ($item->status_finance === 'rejected' && $item->status_direktur === 'approved');
+        });
+
+        // Timpa property items dengan hasil filter
+        $pengadaan->setRelation('items', $filteredItems);
+
         $approvalLogs = ApprovalLog::where('pengadaan_id', $pengadaan->id)
-                        ->orderBy('tanggal_approval')
-                        ->get();
+            ->orderBy('tanggal_approval')
+            ->get();
 
+        $pdf = PDF::loadView('pages.admin.pengadaan.generatePdfBarang', compact('pengadaan', 'approvalLogs'))
+            ->setPaper('A4', 'portrait');
 
+        return $pdf->stream();
+        // $pengadaan = Pengadaan::with('items', 'checker')->findOrFail($id);
+        // $approvalLogs = ApprovalLog::where('pengadaan_id', $pengadaan->id)
+        //                 ->orderBy('tanggal_approval')
+        //                 ->get();
+
+        // INI TIDAK DIPAKAI
         // Hitung total & diskon
         // $grandTotal = 0;
         // foreach ($po->pengadaan->items as $item) {
@@ -598,11 +617,12 @@ class PengadaanController extends Controller
         // $diskonPersen = $po->diskon ?? 0;
         // $nilaiDiskon = $grandTotal * ($diskonPersen / 100);
         // $grandTotalAfterDiskon = $grandTotal - $nilaiDiskon;
+        // INI TIDAK DIPAKAI
 
-        $pdf = PDF::loadView('pages.admin.pengadaan.generatePdfBarang', compact('pengadaan', 'approvalLogs'))
-            ->setPaper('A4', 'portrait');
+        // $pdf = PDF::loadView('pages.admin.pengadaan.generatePdfBarang', compact('pengadaan', 'approvalLogs'))
+        //     ->setPaper('A4', 'portrait');
 
-        return $pdf->stream();
+        // return $pdf->stream();
     }
 
 }

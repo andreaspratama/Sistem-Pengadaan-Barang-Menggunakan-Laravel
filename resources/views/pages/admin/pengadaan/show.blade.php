@@ -70,8 +70,10 @@
                 @php
                     $lastApproval = $pengadaan->approvalLogs->last(); // asumsi relasi namanya 'approvals'
                 @endphp
-                @if ($lastApproval && $lastApproval->status === 'verified')
-                    <a href="{{ route('generatePdfBarang', $pengadaan->id) }}" class="btn btn-danger">Download List Barang</a>
+                @if (in_array(Auth::user()->role, ['Procurement', 'Admin']))
+                    @if ($lastApproval && ($lastApproval->status === 'verified' || $lastApproval->status === 'approved'))
+                        <a href="{{ route('generatePdfBarang', $pengadaan->id) }}" class="btn btn-danger">Download List Barang</a>
+                    @endif
                 @endif
                 </p>
                 <div class="collapse" id="collapseExample">
