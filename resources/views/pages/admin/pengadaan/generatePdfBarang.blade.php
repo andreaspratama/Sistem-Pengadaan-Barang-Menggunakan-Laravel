@@ -113,7 +113,7 @@
     <table>
         <thead>
             <tr>
-                <th>No</th>
+                <th>COA</th>
                 <th>Keterangan</th>
                 <th>Unit</th>
                 <th>Qty</th>
@@ -130,7 +130,7 @@
                     $totalItem = $rab * $jumlah;
                 @endphp
                 <tr>
-                    <td>{{$loop->iteration}}</td>
+                    <td>{{$item->coa}}</td>
                     <td>{{$item->nama ?? $item->judul_buku}}</td>
                     <td>{{$pengadaan->unit}}</td>
                     <td>{{$item->jumlah}}</td>
