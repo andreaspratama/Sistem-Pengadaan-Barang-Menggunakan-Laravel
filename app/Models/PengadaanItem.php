@@ -29,4 +29,9 @@ class PengadaanItem extends Model
     {
         return $this->hasMany(PerintahorderItem::class);
     }
+
+    public function perintahOrderItems()
+    {
+        return $this->hasMany(PerintahorderItem::class, 'pengadaan_item_id');
+    }
 }

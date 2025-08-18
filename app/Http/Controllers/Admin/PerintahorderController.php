@@ -54,24 +54,43 @@ class PerintahorderController extends Controller
      */
     public function create()
     {
-        $usedPengadaanIds = Perintahorder::pluck('pengadaan_id');
-        $pengadaans = Pengadaan::whereNotIn('id', $usedPengadaanIds)
-                        ->where('status', 'finish_procurement')
-                        ->get();
+        $pengadaans = Pengadaan::where('status', 'finish_procurement')
+            ->whereHas('items', function ($q) {
+                $q->whereDoesntHave('perintahOrderItems'); // hanya item yg belum ada PO
+            })
+            ->get();
+
         $units = Unit::all();
 
         return view('pages.admin.perintahorder.create', compact('pengadaans', 'units'));
+        // YANG BAWAH CODE LAMA
+        // $usedPengadaanIds = Perintahorder::pluck('pengadaan_id');
+        // $pengadaans = Pengadaan::whereNotIn('id', $usedPengadaanIds)
+        //                 ->where('status', 'finish_procurement')
+        //                 ->get();
+        // $units = Unit::all();
+
+        // return view('pages.admin.perintahorder.create', compact('pengadaans', 'units'));
     }
 
     public function getVendorsByPengadaan($pengadaanId)
     {
         $kategoriIds = PengadaanItem::where('pengadaan_id', $pengadaanId)
+            ->whereDoesntHave('perintahOrderItems') // belum ada PO
             ->pluck('kategori_id')
             ->unique();
 
         $vendors = Vendor::whereIn('kategori_id', $kategoriIds)->get();
 
         return response()->json($vendors);
+        // YANG BAWAH CODE LAMA
+        // $kategoriIds = PengadaanItem::where('pengadaan_id', $pengadaanId)
+        //     ->pluck('kategori_id')
+        //     ->unique();
+
+        // $vendors = Vendor::whereIn('kategori_id', $kategoriIds)->get();
+
+        // return response()->json($vendors);
     }
 
     /**
@@ -83,23 +102,46 @@ class PerintahorderController extends Controller
         $kategoriId = $vendor->kategori_id;
 
         $items = PengadaanItem::where('pengadaan_id', $pengadaanId)
-                    ->where('kategori_id', $kategoriId)
-                    ->get()
-                    ->map(function ($item) {
-                        return [
-                            'id' => $item->id,
-                            'nama' => $item->nama,
-                            'judul_buku' => $item->judul_buku,
-                            'jumlah' => $item->jumlah,
-                            'rab' => $item->rab,
-                            'catatan_finance' => $item->catatan_finance,
-                            'catatan_direktur' => $item->catatan_direktur,
-                            'status_finance' => $item->status_finance,
-                            'status_direktur' => $item->status_direktur,
-                        ];
-                    });
+            ->where('kategori_id', $kategoriId)
+            ->whereDoesntHave('perintahOrderItems') // belum dibuat PO
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'nama' => $item->nama,
+                    'judul_buku' => $item->judul_buku,
+                    'jumlah' => $item->jumlah,
+                    'rab' => $item->rab,
+                    'catatan_finance' => $item->catatan_finance,
+                    'catatan_direktur' => $item->catatan_direktur,
+                    'status_finance' => $item->status_finance,
+                    'status_direktur' => $item->status_direktur,
+                ];
+            });
 
         return response()->json($items);
+        // YANG BAWAH CODE LAMA
+        // $vendor = Vendor::findOrFail($vendorId);
+        // $kategoriId = $vendor->kategori_id;
+
+        // $items = PengadaanItem::where('pengadaan_id', $pengadaanId)
+        //             ->where('kategori_id', $kategoriId)
+        //             ->get()
+        //             ->map(function ($item) {
+        //                 return [
+        //                     'id' => $item->id,
+        //                     'nama' => $item->nama,
+        //                     'judul_buku' => $item->judul_buku,
+        //                     'jumlah' => $item->jumlah,
+        //                     'rab' => $item->rab,
+        //                     'catatan_finance' => $item->catatan_finance,
+        //                     'catatan_direktur' => $item->catatan_direktur,
+        //                     'status_finance' => $item->status_finance,
+        //                     'status_direktur' => $item->status_direktur,
+        //                 ];
+        //             });
+
+        // return response()->json($items);
     }
     
     public function store(Request $request)
